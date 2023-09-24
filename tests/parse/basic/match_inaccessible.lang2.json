@@ -1,0 +1,155 @@
+{
+  "adts": [],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 10
+      },
+      "body": {
+        "kind": "ValIn",
+        "lhs": {
+          "kind": "IdIntro",
+          "name": "a",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 20,
+            "end": 21
+          }
+        },
+        "rhs": {
+          "kind": "New",
+          "name": {
+            "Unresolved": "Unit"
+          },
+          "params": [],
+          "span": {
+            "start": 24,
+            "end": 28
+          }
+        },
+        "exp": {
+          "kind": "ValIn",
+          "lhs": {
+            "kind": "IdIntro",
+            "name": "b",
+            "id": {
+              "index": 2
+            },
+            "span": {
+              "start": 36,
+              "end": 37
+            }
+          },
+          "rhs": {
+            "kind": "Match",
+            "scrutinees": [
+              {
+                "kind": "New",
+                "name": {
+                  "Unresolved": "Tup"
+                },
+                "params": [
+                  {
+                    "kind": "Id",
+                    "index": 1,
+                    "span": {
+                      "start": 54,
+                      "end": 55
+                    }
+                  },
+                  {
+                    "kind": "Id",
+                    "index": 1,
+                    "span": {
+                      "start": 57,
+                      "end": 58
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 50,
+                  "end": 59
+                }
+              }
+            ],
+            "prongs": [
+              {
+                "patterns": [
+                  {
+                    "kind": "Destruct",
+                    "name": {
+                      "Unresolved": "Tup"
+                    },
+                    "subpatterns": [
+                      {
+                        "kind": "Underscore",
+                        "span": {
+                          "start": 75,
+                          "end": 76
+                        }
+                      },
+                      {
+                        "kind": "IdIntro",
+                        "name": "a",
+                        "id": {
+                          "index": 3
+                        },
+                        "span": {
+                          "start": 78,
+                          "end": 79
+                        }
+                      }
+                    ],
+                    "span": {
+                      "start": 71,
+                      "end": 80
+                    }
+                  }
+                ],
+                "exp": {
+                  "kind": "Id",
+                  "index": 3,
+                  "span": {
+                    "start": 84,
+                    "end": 85
+                  }
+                }
+              }
+            ],
+            "span": {
+              "start": 44,
+              "end": 93
+            }
+          },
+          "exp": {
+            "kind": "Id",
+            "index": 1,
+            "span": {
+              "start": 97,
+              "end": 98
+            }
+          },
+          "span": {
+            "start": 32,
+            "end": 98
+          }
+        },
+        "span": {
+          "start": 16,
+          "end": 98
+        }
+      }
+    }
+  ]
+}

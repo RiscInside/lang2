@@ -1,0 +1,59 @@
+{
+  "adts": [
+    {
+      "name": "Unit",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 23,
+        "end": 23
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 36,
+            "end": 40
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 10
+      },
+      "body": {
+        "kind": "New",
+        "name": {
+          "Resolved": {
+            "index": 0
+          }
+        },
+        "params": [],
+        "span": {
+          "start": 16,
+          "end": 20
+        }
+      }
+    }
+  ]
+}

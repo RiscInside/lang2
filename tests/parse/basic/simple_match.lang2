@@ -1,0 +1,7 @@
+fun main () =>
+  # Simple match example
+  match tup with
+    Tuple1(v) => v,
+    Tuple2(v1, v2) => add(v1, v2),
+    Tuple3(v1, v2, v3) => add(v1, add(v2, v3))
+  end.

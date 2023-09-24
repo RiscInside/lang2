@@ -1,0 +1,8 @@
+data Either[a, b]:
+  Left(a),
+  Right(b).
+
+data Unit: Unit.
+
+fun main() =>
+  Left(Unit).

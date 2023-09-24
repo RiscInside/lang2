@@ -1,0 +1,5 @@
+fun main() =>
+  Unit.
+
+data Unit:
+  Unit.

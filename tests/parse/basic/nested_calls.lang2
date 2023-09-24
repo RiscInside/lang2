@@ -1,0 +1,5 @@
+fun foo() =>
+  val a = Unit.
+  val b = Unit.
+  val c = Unit.
+  add(a, add(b, c)).

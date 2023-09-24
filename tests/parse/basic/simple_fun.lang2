@@ -1,0 +1,7 @@
+data Unit:
+  Unit.
+
+fun foo(a, b) =>
+  foo(a, b).
+
+fun main() => foo(Unit, Unit).

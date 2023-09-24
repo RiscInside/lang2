@@ -1,0 +1,99 @@
+{
+  "tasks": [
+    {
+      "kind": "ASTParsesTo",
+      "source": "nested_calls.lang2",
+      "expected": "nested_calls.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "val_shadowing.lang2",
+      "expected": "val_shadowing.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "val_inaccessible.lang2",
+      "expected": "val_inaccessible.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "simple_match.lang2",
+      "expected": "simple_match.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "match_multiple_scrutinees.lang2",
+      "expected": "match_multiple_scrutinees.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "match_shadowing.lang2",
+      "expected": "match_shadowing.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "match_inaccessible.lang2",
+      "expected": "match_inaccessible.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "unit.lang2",
+      "expected": "unit.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "nested_adts.lang2",
+      "expected": "nested_adts.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "adt_duplicates.lang2",
+      "expected": "adt_duplicates.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "variant_shadowing_across_decls.lang2",
+      "expected": "variant_shadowing_across_decls.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "variant_shadowing_same_decl.lang2",
+      "expected": "variant_shadowing_same_decl.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "either.lang2",
+      "expected": "either.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "type_var_leak.lang2",
+      "expected": "type_var_leak.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "simple_fun.lang2",
+      "expected": "simple_fun.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "mutual_recursion.lang2",
+      "expected": "mutual_recursion.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "fake_delayed_resolution.lang2",
+      "expected": "fake_delayed_resolution.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "data_in_the_end.lang2",
+      "expected": "data_in_the_end.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "out_of_order_tapp.lang2",
+      "expected": "out_of_order_tapp.lang2.json"
+    }
+  ]
+}

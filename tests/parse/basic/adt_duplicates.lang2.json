@@ -1,0 +1,145 @@
+{
+  "adts": [
+    {
+      "name": "Duplicate",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 0,
+        "end": 0
+      },
+      "variants": [
+        {
+          "name": "Foo",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 18,
+            "end": 21
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "Duplicate",
+      "duplicate": true,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 24,
+        "end": 24
+      },
+      "variants": [
+        {
+          "name": "Foo2",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 42,
+            "end": 46
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 53,
+        "end": 59
+      },
+      "body": {
+        "kind": "ValIn",
+        "lhs": {
+          "kind": "IdIntro",
+          "name": "a",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 69,
+            "end": 70
+          }
+        },
+        "rhs": {
+          "kind": "New",
+          "name": {
+            "Unresolved": "Foo2"
+          },
+          "params": [],
+          "span": {
+            "start": 73,
+            "end": 77
+          }
+        },
+        "exp": {
+          "kind": "ValIn",
+          "lhs": {
+            "kind": "IdIntro",
+            "name": "b",
+            "id": {
+              "index": 2
+            },
+            "span": {
+              "start": 85,
+              "end": 86
+            }
+          },
+          "rhs": {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 89,
+              "end": 92
+            }
+          },
+          "exp": {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 96,
+              "end": 99
+            }
+          },
+          "span": {
+            "start": 81,
+            "end": 99
+          }
+        },
+        "span": {
+          "start": 65,
+          "end": 99
+        }
+      }
+    }
+  ]
+}

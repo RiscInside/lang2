@@ -1,0 +1,7 @@
+fun main() =>
+  val a = Unit.
+  val b =
+    match Tup(a, a) with
+      Tup(_, a) => a
+    end.
+  a.

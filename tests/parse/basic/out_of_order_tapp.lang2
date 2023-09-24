@@ -1,0 +1,5 @@
+data Foo:
+  Foo(Bar).
+
+data Bar:
+  Bar(Foo).

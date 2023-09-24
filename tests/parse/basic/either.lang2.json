@@ -1,0 +1,152 @@
+{
+  "adts": [
+    {
+      "name": "Either",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 12,
+            "end": 13
+          }
+        },
+        {
+          "name": "b",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 15,
+            "end": 16
+          }
+        }
+      ],
+      "decl_span": {
+        "start": 0,
+        "end": 17
+      },
+      "variants": [
+        {
+          "name": "Left",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 21,
+            "end": 28
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 0,
+              "span": {
+                "start": 26,
+                "end": 27
+              }
+            }
+          ]
+        },
+        {
+          "name": "Right",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 32,
+            "end": 40
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 1,
+              "span": {
+                "start": 38,
+                "end": 39
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unit",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 43,
+        "end": 43
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 2
+          },
+          "span": {
+            "start": 54,
+            "end": 58
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 65,
+        "end": 71
+      },
+      "body": {
+        "kind": "New",
+        "name": {
+          "Resolved": {
+            "index": 0
+          }
+        },
+        "params": [
+          {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 2
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 82,
+              "end": 86
+            }
+          }
+        ],
+        "span": {
+          "start": 77,
+          "end": 87
+        }
+      }
+    }
+  ]
+}

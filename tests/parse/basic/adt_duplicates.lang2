@@ -1,0 +1,10 @@
+data Duplicate:
+  Foo.
+
+data Duplicate:
+  Foo2.
+
+fun main() =>
+  val a = Foo2.
+  val b = Foo.
+  Foo.

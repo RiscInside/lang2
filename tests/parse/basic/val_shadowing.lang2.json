@@ -1,0 +1,102 @@
+{
+  "adts": [],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 10
+      },
+      "body": {
+        "kind": "ValIn",
+        "lhs": {
+          "kind": "IdIntro",
+          "name": "a",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 20,
+            "end": 21
+          }
+        },
+        "rhs": {
+          "kind": "New",
+          "name": {
+            "Unresolved": "Unit"
+          },
+          "params": [],
+          "span": {
+            "start": 24,
+            "end": 28
+          }
+        },
+        "exp": {
+          "kind": "ValIn",
+          "lhs": {
+            "kind": "IdIntro",
+            "name": "a",
+            "id": {
+              "index": 2
+            },
+            "span": {
+              "start": 36,
+              "end": 37
+            }
+          },
+          "rhs": {
+            "kind": "Id",
+            "index": 1,
+            "span": {
+              "start": 40,
+              "end": 41
+            }
+          },
+          "exp": {
+            "kind": "FnCall",
+            "name": {
+              "Unresolved": "add"
+            },
+            "params": [
+              {
+                "kind": "Id",
+                "index": 2,
+                "span": {
+                  "start": 49,
+                  "end": 50
+                }
+              },
+              {
+                "kind": "Id",
+                "index": 2,
+                "span": {
+                  "start": 52,
+                  "end": 53
+                }
+              }
+            ],
+            "span": {
+              "start": 45,
+              "end": 54
+            }
+          },
+          "span": {
+            "start": 32,
+            "end": 54
+          }
+        },
+        "span": {
+          "start": 16,
+          "end": 54
+        }
+      }
+    }
+  ]
+}

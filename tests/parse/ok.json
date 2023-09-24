@@ -1,0 +1,8 @@
+{
+  "tasks": [
+    {
+      "kind": "Include",
+      "path": "basic/ok.json"
+    }
+  ]
+}

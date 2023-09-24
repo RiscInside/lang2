@@ -1,0 +1,83 @@
+{
+  "adts": [
+    {
+      "name": "Foo",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 0,
+        "end": 0
+      },
+      "variants": [
+        {
+          "name": "Foo",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 12,
+            "end": 20
+          },
+          "tys": [
+            {
+              "kind": "App",
+              "cons": {
+                "Unresolved": "Bar"
+              },
+              "params": [],
+              "span": {
+                "start": 16,
+                "end": 19
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bar",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 23,
+        "end": 23
+      },
+      "variants": [
+        {
+          "name": "Bar",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 35,
+            "end": 43
+          },
+          "tys": [
+            {
+              "kind": "App",
+              "cons": {
+                "Resolved": {
+                  "index": 0
+                }
+              },
+              "params": [],
+              "span": {
+                "start": 39,
+                "end": 42
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "funs": []
+}

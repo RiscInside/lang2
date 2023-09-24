@@ -1,0 +1,6 @@
+data ADT:
+  Foo,
+  Foo.
+
+fun main() =>
+  Foo.

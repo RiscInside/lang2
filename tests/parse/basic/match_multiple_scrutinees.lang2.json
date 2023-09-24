@@ -1,0 +1,269 @@
+{
+  "adts": [],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 10
+      },
+      "body": {
+        "kind": "Match",
+        "scrutinees": [
+          {
+            "kind": "FreeId",
+            "Unresolved": "opt1",
+            "span": {
+              "start": 22,
+              "end": 26
+            }
+          },
+          {
+            "kind": "FreeId",
+            "Unresolved": "opt2",
+            "span": {
+              "start": 28,
+              "end": 32
+            }
+          }
+        ],
+        "prongs": [
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "Some"
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 1
+                    },
+                    "span": {
+                      "start": 47,
+                      "end": 49
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 42,
+                  "end": 50
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "None"
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 52,
+                  "end": 56
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Unresolved": "Unary"
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 1,
+                  "span": {
+                    "start": 66,
+                    "end": 68
+                  }
+                }
+              ],
+              "span": {
+                "start": 60,
+                "end": 69
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "None"
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 75,
+                  "end": 79
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "Some"
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 2
+                    },
+                    "span": {
+                      "start": 86,
+                      "end": 88
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 81,
+                  "end": 89
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Unresolved": "Unary"
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 2,
+                  "span": {
+                    "start": 99,
+                    "end": 101
+                  }
+                }
+              ],
+              "span": {
+                "start": 93,
+                "end": 102
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "Some"
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 3
+                    },
+                    "span": {
+                      "start": 113,
+                      "end": 115
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 108,
+                  "end": 116
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "Some"
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 4
+                    },
+                    "span": {
+                      "start": 123,
+                      "end": 125
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 118,
+                  "end": 126
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Unresolved": "Pair"
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 3,
+                  "span": {
+                    "start": 135,
+                    "end": 137
+                  }
+                },
+                {
+                  "kind": "Id",
+                  "index": 4,
+                  "span": {
+                    "start": 139,
+                    "end": 141
+                  }
+                }
+              ],
+              "span": {
+                "start": 130,
+                "end": 142
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Underscore",
+                "span": {
+                  "start": 148,
+                  "end": 149
+                }
+              },
+              {
+                "kind": "Underscore",
+                "span": {
+                  "start": 151,
+                  "end": 152
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Unresolved": "Nullary"
+              },
+              "params": [],
+              "span": {
+                "start": 156,
+                "end": 163
+              }
+            }
+          }
+        ],
+        "span": {
+          "start": 16,
+          "end": 169
+        }
+      }
+    }
+  ]
+}

@@ -1,6 +1,11 @@
-[package]
-name = "lang2"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [
+    "bin/lang2c",
+    "bin/lang2test",
 
-[dependencies]
+    "src/lang2-ast",
+    "src/lang2-parser",
+    "src/lang2-span",
+    "src/lang2-shadow",
+]
+resolver = "2"

@@ -1,0 +1,181 @@
+{
+  "adts": [
+    {
+      "name": "Option",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 12,
+            "end": 13
+          }
+        }
+      ],
+      "decl_span": {
+        "start": 0,
+        "end": 14
+      },
+      "variants": [
+        {
+          "name": "Some",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 18,
+            "end": 25
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 0,
+              "span": {
+                "start": 23,
+                "end": 24
+              }
+            }
+          ]
+        },
+        {
+          "name": "None",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 29,
+            "end": 33
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "Foo",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 36,
+        "end": 36
+      },
+      "variants": [
+        {
+          "name": "Foo",
+          "duplicate": false,
+          "id": {
+            "index": 2
+          },
+          "span": {
+            "start": 48,
+            "end": 54
+          },
+          "tys": [
+            {
+              "kind": "UnresolvedVar",
+              "name": "a",
+              "span": {
+                "start": 52,
+                "end": 53
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unit",
+      "duplicate": false,
+      "id": {
+        "index": 2
+      },
+      "params": [],
+      "decl_span": {
+        "start": 57,
+        "end": 57
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 3
+          },
+          "span": {
+            "start": 70,
+            "end": 74
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 81,
+        "end": 87
+      },
+      "body": {
+        "kind": "New",
+        "name": {
+          "Resolved": {
+            "index": 0
+          }
+        },
+        "params": [
+          {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 2
+              }
+            },
+            "params": [
+              {
+                "kind": "New",
+                "name": {
+                  "Resolved": {
+                    "index": 3
+                  }
+                },
+                "params": [],
+                "span": {
+                  "start": 102,
+                  "end": 106
+                }
+              }
+            ],
+            "span": {
+              "start": 98,
+              "end": 107
+            }
+          }
+        ],
+        "span": {
+          "start": 93,
+          "end": 108
+        }
+      }
+    }
+  ]
+}

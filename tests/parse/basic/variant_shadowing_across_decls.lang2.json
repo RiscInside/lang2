@@ -1,0 +1,85 @@
+{
+  "adts": [
+    {
+      "name": "ADT1",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 0,
+        "end": 0
+      },
+      "variants": [
+        {
+          "name": "Foo",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 13,
+            "end": 16
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "ADT2",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 19,
+        "end": 19
+      },
+      "variants": [
+        {
+          "name": "Foo",
+          "duplicate": true,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 32,
+            "end": 35
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 42,
+        "end": 48
+      },
+      "body": {
+        "kind": "New",
+        "name": {
+          "Resolved": {
+            "index": 1
+          }
+        },
+        "params": [],
+        "span": {
+          "start": 52,
+          "end": 55
+        }
+      }
+    }
+  ]
+}

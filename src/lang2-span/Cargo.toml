@@ -1,0 +1,8 @@
+[package]
+name = "lang2-span"
+version = "0.1.0"
+edition = "2021"
+description = "Source spans in the lang2 program"
+
+[dependencies]
+serde = { version = "1.0.188", features = ["derive"] }

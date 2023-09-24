@@ -1,0 +1,4 @@
+fun main() =>
+  val a = Unit.
+  val a = a.
+  add(a, a).

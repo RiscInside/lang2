@@ -1,0 +1,102 @@
+{
+  "adts": [],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 10
+      },
+      "body": {
+        "kind": "ValIn",
+        "lhs": {
+          "kind": "IdIntro",
+          "name": "b",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 20,
+            "end": 21
+          }
+        },
+        "rhs": {
+          "kind": "ValIn",
+          "lhs": {
+            "kind": "IdIntro",
+            "name": "a",
+            "id": {
+              "index": 2
+            },
+            "span": {
+              "start": 28,
+              "end": 29
+            }
+          },
+          "rhs": {
+            "kind": "New",
+            "name": {
+              "Unresolved": "Unit"
+            },
+            "params": [],
+            "span": {
+              "start": 32,
+              "end": 36
+            }
+          },
+          "exp": {
+            "kind": "Id",
+            "index": 2,
+            "span": {
+              "start": 38,
+              "end": 39
+            }
+          },
+          "span": {
+            "start": 24,
+            "end": 39
+          }
+        },
+        "exp": {
+          "kind": "FnCall",
+          "name": {
+            "Unresolved": "add"
+          },
+          "params": [
+            {
+              "kind": "FreeId",
+              "Unresolved": "a",
+              "span": {
+                "start": 47,
+                "end": 48
+              }
+            },
+            {
+              "kind": "Id",
+              "index": 1,
+              "span": {
+                "start": 50,
+                "end": 51
+              }
+            }
+          ],
+          "span": {
+            "start": 43,
+            "end": 52
+          }
+        },
+        "span": {
+          "start": 16,
+          "end": 52
+        }
+      }
+    }
+  ]
+}

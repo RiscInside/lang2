@@ -1,0 +1,13 @@
+fun main() =>
+  fun b() =>
+    # Setting up delayed resolution for a
+    a().
+  
+  fun c() =>
+    # Definiting a here
+    fun a() =>
+      main().
+    
+    a().
+
+  c().

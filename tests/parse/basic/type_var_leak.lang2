@@ -1,0 +1,12 @@
+data Option[a]:
+  Some(a),
+  None.
+
+data Foo:
+  Foo(a).
+
+data Unit:
+  Unit.
+
+fun main() =>
+  Some(Foo(Unit)).

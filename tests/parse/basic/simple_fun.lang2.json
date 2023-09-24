@@ -1,0 +1,153 @@
+{
+  "adts": [
+    {
+      "name": "Unit",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 0,
+        "end": 0
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 13,
+            "end": 17
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "foo",
+      "id": {
+        "index": 2
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [
+        {
+          "kind": "IdIntro",
+          "name": "a",
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 28,
+            "end": 29
+          }
+        },
+        {
+          "kind": "IdIntro",
+          "name": "b",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 31,
+            "end": 32
+          }
+        }
+      ],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 24,
+        "end": 33
+      },
+      "body": {
+        "kind": "FnCall",
+        "name": {
+          "Resolved": {
+            "index": 2
+          }
+        },
+        "params": [
+          {
+            "kind": "Id",
+            "index": 0,
+            "span": {
+              "start": 43,
+              "end": 44
+            }
+          },
+          {
+            "kind": "Id",
+            "index": 1,
+            "span": {
+              "start": 46,
+              "end": 47
+            }
+          }
+        ],
+        "span": {
+          "start": 39,
+          "end": 48
+        }
+      }
+    },
+    {
+      "name": "main",
+      "id": {
+        "index": 3
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 55,
+        "end": 61
+      },
+      "body": {
+        "kind": "FnCall",
+        "name": {
+          "Resolved": {
+            "index": 2
+          }
+        },
+        "params": [
+          {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 69,
+              "end": 73
+            }
+          },
+          {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 75,
+              "end": 79
+            }
+          }
+        ],
+        "span": {
+          "start": 65,
+          "end": 80
+        }
+      }
+    }
+  ]
+}

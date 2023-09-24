@@ -1,0 +1,13 @@
+[package]
+name = "lang2-ast"
+version = "0.1.0"
+edition = "2021"
+description = "Abstract syntax trees for lang2 programs"
+
+[dependencies]
+lang2-span = { path = "../lang2-span" }
+lang2-shadow = { path = "../lang2-shadow" }
+
+bumpalo = "3.14.0"
+serde = { version = "1.0.188", features = ["derive"] }
+smallvec = "1.11.1"

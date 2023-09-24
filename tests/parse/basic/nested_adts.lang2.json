@@ -1,0 +1,113 @@
+{
+  "adts": [
+    {
+      "name": "ADT1",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [],
+      "decl_span": {
+        "start": 0,
+        "end": 0
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 13,
+            "end": 17
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "ADT2",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [],
+      "decl_span": {
+        "start": 20,
+        "end": 20
+      },
+      "variants": [
+        {
+          "name": "Include",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 33,
+            "end": 46
+          },
+          "tys": [
+            {
+              "kind": "App",
+              "cons": {
+                "Resolved": {
+                  "index": 0
+                }
+              },
+              "params": [],
+              "span": {
+                "start": 41,
+                "end": 45
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 53,
+        "end": 59
+      },
+      "body": {
+        "kind": "New",
+        "name": {
+          "Resolved": {
+            "index": 1
+          }
+        },
+        "params": [
+          {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 73,
+              "end": 77
+            }
+          }
+        ],
+        "span": {
+          "start": 65,
+          "end": 78
+        }
+      }
+    }
+  ]
+}
