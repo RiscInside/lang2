@@ -26,7 +26,7 @@ pub enum Error {
 pub type ParseResult<T> = Result<T, Error>;
 
 #[derive(Logos, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-#[logos(skip r"[\n\t\f ]+|#.*\n")]
+#[logos(skip r"[\n\t\r\f ]+|#.*\n")]
 enum TokenKind {
     #[token("fun")]
     Fun,
