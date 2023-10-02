@@ -157,6 +157,8 @@ pub struct Function<'arena> {
     pub name: &'arena str,
     /// Identifier ID
     pub id: Id,
+    /// Function group ID
+    pub fn_group: Option<FunGroupIdx>,
     /// True if duplicate
     pub duplicate: bool,
     /// Type parameters

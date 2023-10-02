@@ -6,6 +6,7 @@
       "id": {
         "index": 0
       },
+      "fn_group": null,
       "duplicate": false,
       "ty_params": [],
       "params": [],
@@ -21,6 +22,9 @@
             "name": "b",
             "id": {
               "index": 1
+            },
+            "fn_group": {
+              "index": 0
             },
             "duplicate": false,
             "ty_params": [],
@@ -47,6 +51,9 @@
             "id": {
               "index": 2
             },
+            "fn_group": {
+              "index": 0
+            },
             "duplicate": false,
             "ty_params": [],
             "params": [],
@@ -62,6 +69,9 @@
                   "name": "a",
                   "id": {
                     "index": 3
+                  },
+                  "fn_group": {
+                    "index": 1
                   },
                   "duplicate": false,
                   "ty_params": [],
@@ -100,7 +110,7 @@
                 }
               },
               "idx": {
-                "index": 0
+                "index": 1
               },
               "span": {
                 "start": 122,
@@ -123,7 +133,7 @@
           }
         },
         "idx": {
-          "index": 1
+          "index": 0
         },
         "span": {
           "start": 16,

@@ -1,5 +1,5 @@
 use lang2_ast::{
-    builder::{ADTGroupContext, Builder},
+    builder::{ADTGroupContext, Builder, FunGroupHead},
     Exp, Function, Pattern, Prong, Ty, TypeParamsList, Variant, ADT, AST,
 };
 use lang2_span::{from_to, HasSpan, Span};
@@ -385,7 +385,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_fun(&mut self) -> ParseResult<Function<'arena>> {
+    fn parse_fun(&mut self, group: Option<&FunGroupHead<'arena>>) -> ParseResult<Function<'arena>> {
         self.consume(); // skip fun
         let name_span = self.expect_exact(TokenKind::LowercaseStartId)?;
         let decl_start = name_span.start;
@@ -443,16 +443,16 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         let body = self.parse_exp()?;
         self.expect_exact(TokenKind::Period)?;
 
-        Ok(self.builder.build_function(head, body))
+        Ok(self.builder.build_function(group, head, body))
     }
 
     fn parse_fun_group(&mut self, fun_span: Span) -> ParseResult<Exp<'arena>> {
         let head = self.builder.fun_group_start();
-        let mut funs: SmallVec<[Function<'arena>; 4]> = smallvec![self.parse_fun()?];
+        let mut funs: SmallVec<[Function<'arena>; 4]> = smallvec![self.parse_fun(Some(&head))?];
 
         let mut tok = self.peek()?;
         while tok.kind == TokenKind::Fun {
-            funs.push(self.parse_fun()?);
+            funs.push(self.parse_fun(Some(&head))?);
             tok = self.peek()?;
         }
 
@@ -753,7 +753,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         while let Some(tok) = self.peek_maybe_eof()? {
             match tok.kind {
                 TokenKind::Fun => {
-                    let fun = self.parse_fun()?;
+                    let fun = self.parse_fun(None)?;
                     self.builder.add_function(fun);
                 }
                 TokenKind::Data => {

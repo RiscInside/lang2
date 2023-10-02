@@ -73,6 +73,8 @@ pub struct ProngHead<'arena> {
 
 /// Function group head. This structure saves direct_id_table which is moved out.
 pub struct FunGroupHead<'arena> {
+    /// Index of the function group
+    index: usize,
     /// Saved direct_id_table
     direct_id_table: Table<&'arena str, Id>,
     /// Saved delayed resolutions counter
@@ -84,7 +86,7 @@ pub struct Functions<'arena> {
     /// Functions
     funs: &'arena [Function<'arena>],
     /// Index of the function group
-    index: usize,
+    index: FunGroupIdx,
 }
 
 /// Context maintained during ADT group parsing
@@ -721,6 +723,11 @@ impl<'arena> Builder<'arena> {
 
     /// Begin parsing a group of functions
     pub fn fun_group_start(&mut self) -> FunGroupHead<'arena> {
+        // Reserve function group identifier
+        let index = self.side.fun_groups_table.len();
+        self.side.fun_groups_table.push(FunGroupSide {
+            funs: self.funs_sentinel,
+        });
         // In the beginning of the function group, no binding is undisputably available - virtually any outer binding
         // can be shadowed by some function defined later in a function group block. To reflect this, direct_id_table
         // is emptied, causing all identifier resolution for things in outer scopes to be delayed until we leave the
@@ -728,6 +735,7 @@ impl<'arena> Builder<'arena> {
         FunGroupHead {
             direct_id_table: std::mem::take(&mut self.direct_id_table),
             delayed: self.delayed_id_resolutions_cnt,
+            index,
         }
     }
 
@@ -772,6 +780,7 @@ impl<'arena> Builder<'arena> {
     /// Parse a function
     pub fn build_function(
         &mut self,
+        group: Option<&FunGroupHead<'arena>>,
         head: FunctionHead<'arena>,
         body: Exp<'arena>,
     ) -> Function<'arena> {
@@ -782,6 +791,9 @@ impl<'arena> Builder<'arena> {
         Function {
             name: head.name,
             id: head.id,
+            fn_group: group.map(|group| FunGroupIdx {
+                index: group.index.try_into().unwrap(),
+            }),
             duplicate: head.duplicate,
             ty_params: head.ty_params,
             params: head.params,
@@ -815,14 +827,11 @@ impl<'arena> Builder<'arena> {
             }
         }
         self.direct_id_table = direct_id_table;
-        // Reserve function group identifier
-        let id = self.side.fun_groups_table.len();
-        self.side.fun_groups_table.push(FunGroupSide {
-            funs: self.funs_sentinel,
-        });
         Functions {
             funs: functions,
-            index: id,
+            index: FunGroupIdx {
+                index: head.index.try_into().unwrap(),
+            },
         }
     }
 
@@ -839,14 +848,13 @@ impl<'arena> Builder<'arena> {
                 self.direct_id_table.pop(function.name);
             }
         }
+        let side_table_idx = fns.index.index as usize;
         let funs_in = self.bump.alloc(FunsIn {
             fns: fns.funs,
             exp,
-            idx: FunGroupIdx {
-                index: fns.index.try_into().unwrap(),
-            },
+            idx: fns.index,
         });
-        self.side.fun_groups_table[fns.index].funs = funs_in;
+        self.side.fun_groups_table[side_table_idx].funs = funs_in;
         Exp {
             span,
             kind: ExpKind::FunsIn(funs_in),

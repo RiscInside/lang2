@@ -59,6 +59,7 @@
       "id": {
         "index": 0
       },
+      "fn_group": null,
       "duplicate": false,
       "ty_params": [],
       "params": [],
