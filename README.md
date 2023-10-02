@@ -10,44 +10,7 @@ Typesystem of lang2 is based on Damas–Hindley–Milner typesystem, ensuring th
 
 Below is a simple example of what lang2 code might look like.
 
-```
-data Opt[a]:
-  Some(a),
-  None.
-
-data Opt2[a, b]:
-  Both(a, b),
-  Left(a),
-  Right(b),
-  Neither.
-
-data Pair[a, b]:
-  Pair(a, b).
-
-fun compose[a, b](opt1: Opt[a], opt2: Opt[b]): Opt2[a, b] =>
-  match opt1, opt2 with
-    Some(v1), Some(v2) => Both(v1, v2),
-    Some(v1), None => Left(v1),
-    None, Some(v2) => Right(v2),
-    None, None => Neither
-  end.
-
-# Type annotations are completely optional!
-fun decompose(opts) =>
-  match opts with
-    Both(v1, v2) => Pair(Some(v1), Some(v2)),
-    Left(v1) => Pair(Some(v1), None),
-    Right(v2) => Pair(None, Some(v2)),
-    Neither => Pair(None, None)
-  end.
-
-data Unit: Unit.
-
-fun main() =>
-  val a = Some(Unit).
-  val b = None.
-  decompose(compose(a, b)).
-```
+<img src="misc/example.png" alt="code sample, see tests/parse/basic/opts_compose.lang2" height=50% width=50%></img>
 
 One can note that lang2, unlike OCaml and Haskell, does not use juxtaposition for function calls. The reasons for that are as follows.
 
