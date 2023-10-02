@@ -1,5 +1,9 @@
 use serde::{Deserialize, Serialize};
-use std::{cell::Cell, hash::Hash, ops::Index};
+use std::{
+    cell::Cell,
+    hash::Hash,
+    ops::{Index, IndexMut},
+};
 
 use lang2_span::{HasSpan, Span};
 
@@ -363,6 +367,12 @@ pub struct ConsSide<'arena> {
     pub adt: TypeCons,
 }
 
+/// Side information for function in statements
+pub struct FunGroupSide<'arena> {
+    /// Pointer to the group
+    pub funs: &'arena FunsIn<'arena>,
+}
+
 /// Side table
 pub struct SideTable<'arena> {
     /// Type variables side table
@@ -373,8 +383,8 @@ pub struct SideTable<'arena> {
     pub(crate) cons_table: Vec<ConsSide<'arena>>,
     /// Identifier side table
     pub(crate) id_table: Vec<IdSide<'arena>>,
-    /// Number of function groups. 0 slot is reserved for the top-level
-    fn_groups_count: u32,
+    /// Number of function groups
+    pub(crate) fun_groups_table: Vec<FunGroupSide<'arena>>,
 }
 
 impl<'arena> Index<TypeVar> for SideTable<'arena> {
@@ -409,25 +419,63 @@ impl<'arena> Index<Id> for SideTable<'arena> {
     }
 }
 
+impl<'arena> Index<FunGroupIdx> for SideTable<'arena> {
+    type Output = FunGroupSide<'arena>;
+
+    fn index(&self, id: FunGroupIdx) -> &Self::Output {
+        &self.fun_groups_table[id.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<TypeVar> for SideTable<'arena> {
+    fn index_mut(&mut self, tv: TypeVar) -> &mut Self::Output {
+        &mut self.tyvar_table[tv.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<TypeCons> for SideTable<'arena> {
+    fn index_mut(&mut self, tcons: TypeCons) -> &mut Self::Output {
+        &mut self.tycons_table[tcons.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<Cons> for SideTable<'arena> {
+    fn index_mut(&mut self, cons: Cons) -> &mut Self::Output {
+        &mut self.cons_table[cons.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<Id> for SideTable<'arena> {
+    fn index_mut(&mut self, id: Id) -> &mut Self::Output {
+        &mut self.id_table[id.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<FunGroupIdx> for SideTable<'arena> {
+    fn index_mut(&mut self, id: FunGroupIdx) -> &mut Self::Output {
+        &mut self.fun_groups_table[id.index as usize]
+    }
+}
+
 impl SideTable<'_> {
-    pub fn tyvar_count(&mut self) -> u32 {
-        self.tyvar_table.len().try_into().unwrap()
+    pub fn tyvar_count(&mut self) -> usize {
+        self.tyvar_table.len()
     }
 
-    pub fn tycons_count(&mut self) -> u32 {
-        self.tycons_table.len().try_into().unwrap()
+    pub fn tycons_count(&mut self) -> usize {
+        self.tycons_table.len()
     }
 
-    pub fn cons_count(&mut self) -> u32 {
-        self.cons_table.len().try_into().unwrap()
+    pub fn cons_count(&mut self) -> usize {
+        self.cons_table.len()
     }
 
-    pub fn id_count(&mut self) -> u32 {
-        self.id_table.len().try_into().unwrap()
+    pub fn id_count(&mut self) -> usize {
+        self.id_table.len()
     }
 
-    pub fn fn_groups_count(&mut self) -> u32 {
-        self.fn_groups_count
+    pub fn fn_groups_count(&mut self) -> usize {
+        self.fun_groups_table.len()
     }
 }
 

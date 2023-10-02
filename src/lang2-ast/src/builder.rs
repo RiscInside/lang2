@@ -49,6 +49,8 @@ pub struct Builder<'arena> {
     adt_sentinel: &'arena ADT<'arena>,
     /// Variant sentinel (fake variant to point to to reserve the slot)
     variant_sentinel: &'arena Variant<'arena>,
+    /// Funs in sentinel
+    funs_sentinel: &'arena FunsIn<'arena>,
 }
 
 /// Head of the val-in statement
@@ -75,6 +77,14 @@ pub struct FunGroupHead<'arena> {
     direct_id_table: Table<&'arena str, Id>,
     /// Saved delayed resolutions counter
     delayed: usize,
+}
+
+/// Functions in function group assembled together
+pub struct Functions<'arena> {
+    /// Functions
+    funs: &'arena [Function<'arena>],
+    /// Index of the function group
+    index: usize,
 }
 
 /// Context maintained during ADT group parsing
@@ -113,7 +123,7 @@ impl<'arena> Builder<'arena> {
                 tycons_table: vec![],
                 cons_table: vec![],
                 id_table: vec![],
-                fn_groups_count: 0,
+                fun_groups_table: vec![],
             },
             tyvar_table: Table::new(),
             tycons_table: Table::new(),
@@ -138,6 +148,14 @@ impl<'arena> Builder<'arena> {
                 id: Cons { index: 0xfffffffd },
                 span: Span { start: 84, end: 19 },
                 tys: &[],
+            }),
+            funs_sentinel: bump.alloc(FunsIn {
+                fns: &[],
+                exp: Exp {
+                    kind: ExpKind::Id(Id { index: 0xfffffff9 }),
+                    span: Span { start: 84, end: 19 },
+                },
+                idx: FunGroupIdx { index: 0xfffffff8 },
             }),
         }
     }
@@ -778,7 +796,7 @@ impl<'arena> Builder<'arena> {
         &mut self,
         head: FunGroupHead<'arena>,
         functions: impl ExactSizeIterator<Item = Function<'arena>>,
-    ) -> &'arena [Function<'arena>] {
+    ) -> Functions<'arena> {
         let functions = self.bump.alloc_slice_fill_iter(functions);
         // Process delayed resolutions if any were queued
         if self.delayed_id_resolutions_cnt != head.delayed {
@@ -797,34 +815,41 @@ impl<'arena> Builder<'arena> {
             }
         }
         self.direct_id_table = direct_id_table;
-        functions
+        // Reserve function group identifier
+        let id = self.side.fun_groups_table.len();
+        self.side.fun_groups_table.push(FunGroupSide {
+            funs: self.funs_sentinel,
+        });
+        Functions {
+            funs: functions,
+            index: id,
+        }
     }
 
     /// Build function expression
     pub fn build_function_exp(
         &mut self,
-        fns: &'arena [Function<'arena>],
+        fns: Functions<'arena>,
         exp: Exp<'arena>,
         span: Span,
     ) -> Exp<'arena> {
         // Undefine functions
-        for function in fns {
+        for function in fns.funs {
             if !function.duplicate {
                 self.direct_id_table.pop(function.name);
             }
         }
+        let funs_in = self.bump.alloc(FunsIn {
+            fns: fns.funs,
+            exp,
+            idx: FunGroupIdx {
+                index: fns.index.try_into().unwrap(),
+            },
+        });
+        self.side.fun_groups_table[fns.index].funs = funs_in;
         Exp {
             span,
-            kind: ExpKind::FunsIn(self.bump.alloc(FunsIn {
-                fns,
-                exp,
-                idx: {
-                    self.side.fn_groups_count = self.side.fn_groups_count.checked_add(1).unwrap();
-                    FunGroupIdx {
-                        index: self.side.fn_groups_count,
-                    }
-                },
-            })),
+            kind: ExpKind::FunsIn(funs_in),
         }
     }
 
