@@ -94,6 +94,11 @@
       "kind": "ASTParsesTo",
       "source": "out_of_order_tapp.lang2",
       "expected": "out_of_order_tapp.lang2.json"
+    },
+    {
+      "kind": "ASTParsesTo",
+      "source": "opts_compose.lang2",
+      "expected": "opts_compose.lang2.json"
     }
   ]
 }

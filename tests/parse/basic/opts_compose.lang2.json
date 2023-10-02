@@ -1,0 +1,1196 @@
+{
+  "adts": [
+    {
+      "name": "Opt",
+      "duplicate": false,
+      "id": {
+        "index": 0
+      },
+      "params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 9,
+            "end": 10
+          }
+        }
+      ],
+      "decl_span": {
+        "start": 0,
+        "end": 11
+      },
+      "variants": [
+        {
+          "name": "Some",
+          "duplicate": false,
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 15,
+            "end": 22
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 0,
+              "span": {
+                "start": 20,
+                "end": 21
+              }
+            }
+          ]
+        },
+        {
+          "name": "None",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 26,
+            "end": 30
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "Opt2",
+      "duplicate": false,
+      "id": {
+        "index": 1
+      },
+      "params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 43,
+            "end": 44
+          }
+        },
+        {
+          "name": "b",
+          "duplicate": false,
+          "id": {
+            "index": 2
+          },
+          "span": {
+            "start": 46,
+            "end": 47
+          }
+        }
+      ],
+      "decl_span": {
+        "start": 33,
+        "end": 48
+      },
+      "variants": [
+        {
+          "name": "Both",
+          "duplicate": false,
+          "id": {
+            "index": 2
+          },
+          "span": {
+            "start": 52,
+            "end": 62
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 1,
+              "span": {
+                "start": 57,
+                "end": 58
+              }
+            },
+            {
+              "kind": "Var",
+              "index": 2,
+              "span": {
+                "start": 60,
+                "end": 61
+              }
+            }
+          ]
+        },
+        {
+          "name": "Left",
+          "duplicate": false,
+          "id": {
+            "index": 3
+          },
+          "span": {
+            "start": 66,
+            "end": 73
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 1,
+              "span": {
+                "start": 71,
+                "end": 72
+              }
+            }
+          ]
+        },
+        {
+          "name": "Right",
+          "duplicate": false,
+          "id": {
+            "index": 4
+          },
+          "span": {
+            "start": 77,
+            "end": 85
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 2,
+              "span": {
+                "start": 83,
+                "end": 84
+              }
+            }
+          ]
+        },
+        {
+          "name": "Neither",
+          "duplicate": false,
+          "id": {
+            "index": 5
+          },
+          "span": {
+            "start": 89,
+            "end": 96
+          },
+          "tys": []
+        }
+      ]
+    },
+    {
+      "name": "Pair",
+      "duplicate": false,
+      "id": {
+        "index": 2
+      },
+      "params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 3
+          },
+          "span": {
+            "start": 109,
+            "end": 110
+          }
+        },
+        {
+          "name": "b",
+          "duplicate": false,
+          "id": {
+            "index": 4
+          },
+          "span": {
+            "start": 112,
+            "end": 113
+          }
+        }
+      ],
+      "decl_span": {
+        "start": 99,
+        "end": 114
+      },
+      "variants": [
+        {
+          "name": "Pair",
+          "duplicate": false,
+          "id": {
+            "index": 6
+          },
+          "span": {
+            "start": 118,
+            "end": 128
+          },
+          "tys": [
+            {
+              "kind": "Var",
+              "index": 3,
+              "span": {
+                "start": 123,
+                "end": 124
+              }
+            },
+            {
+              "kind": "Var",
+              "index": 4,
+              "span": {
+                "start": 126,
+                "end": 127
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unit",
+      "duplicate": false,
+      "id": {
+        "index": 3
+      },
+      "params": [],
+      "decl_span": {
+        "start": 603,
+        "end": 603
+      },
+      "variants": [
+        {
+          "name": "Unit",
+          "duplicate": false,
+          "id": {
+            "index": 7
+          },
+          "span": {
+            "start": 614,
+            "end": 618
+          },
+          "tys": []
+        }
+      ]
+    }
+  ],
+  "funs": [
+    {
+      "name": "compose",
+      "id": {
+        "index": 2
+      },
+      "duplicate": false,
+      "ty_params": [
+        {
+          "name": "a",
+          "duplicate": false,
+          "id": {
+            "index": 5
+          },
+          "span": {
+            "start": 143,
+            "end": 144
+          }
+        },
+        {
+          "name": "b",
+          "duplicate": false,
+          "id": {
+            "index": 6
+          },
+          "span": {
+            "start": 146,
+            "end": 147
+          }
+        }
+      ],
+      "params": [
+        {
+          "kind": "Annotated",
+          "ty": {
+            "kind": "App",
+            "cons": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [
+              {
+                "kind": "Var",
+                "index": 5,
+                "span": {
+                  "start": 159,
+                  "end": 160
+                }
+              }
+            ],
+            "span": {
+              "start": 155,
+              "end": 161
+            }
+          },
+          "pat": {
+            "kind": "IdIntro",
+            "name": "opt1",
+            "id": {
+              "index": 0
+            },
+            "span": {
+              "start": 149,
+              "end": 153
+            }
+          },
+          "span": {
+            "start": 149,
+            "end": 161
+          }
+        },
+        {
+          "kind": "Annotated",
+          "ty": {
+            "kind": "App",
+            "cons": {
+              "Resolved": {
+                "index": 0
+              }
+            },
+            "params": [
+              {
+                "kind": "Var",
+                "index": 6,
+                "span": {
+                  "start": 173,
+                  "end": 174
+                }
+              }
+            ],
+            "span": {
+              "start": 169,
+              "end": 175
+            }
+          },
+          "pat": {
+            "kind": "IdIntro",
+            "name": "opt2",
+            "id": {
+              "index": 1
+            },
+            "span": {
+              "start": 163,
+              "end": 167
+            }
+          },
+          "span": {
+            "start": 163,
+            "end": 175
+          }
+        }
+      ],
+      "ret_ty": {
+        "kind": "App",
+        "cons": {
+          "Resolved": {
+            "index": 1
+          }
+        },
+        "params": [
+          {
+            "kind": "Var",
+            "index": 5,
+            "span": {
+              "start": 183,
+              "end": 184
+            }
+          },
+          {
+            "kind": "Var",
+            "index": 6,
+            "span": {
+              "start": 186,
+              "end": 187
+            }
+          }
+        ],
+        "span": {
+          "start": 178,
+          "end": 188
+        }
+      },
+      "decl_span": {
+        "start": 135,
+        "end": 188
+      },
+      "body": {
+        "kind": "Match",
+        "scrutinees": [
+          {
+            "kind": "Id",
+            "index": 0,
+            "span": {
+              "start": 200,
+              "end": 204
+            }
+          },
+          {
+            "kind": "Id",
+            "index": 1,
+            "span": {
+              "start": 206,
+              "end": 210
+            }
+          }
+        ],
+        "prongs": [
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 0
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 3
+                    },
+                    "span": {
+                      "start": 225,
+                      "end": 227
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 220,
+                  "end": 228
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 0
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 4
+                    },
+                    "span": {
+                      "start": 235,
+                      "end": 237
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 230,
+                  "end": 238
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 2
+                }
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 3,
+                  "span": {
+                    "start": 247,
+                    "end": 249
+                  }
+                },
+                {
+                  "kind": "Id",
+                  "index": 4,
+                  "span": {
+                    "start": 251,
+                    "end": 253
+                  }
+                }
+              ],
+              "span": {
+                "start": 242,
+                "end": 254
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 0
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 5
+                    },
+                    "span": {
+                      "start": 265,
+                      "end": 267
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 260,
+                  "end": 268
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 1
+                  }
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 270,
+                  "end": 274
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 3
+                }
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 5,
+                  "span": {
+                    "start": 283,
+                    "end": 285
+                  }
+                }
+              ],
+              "span": {
+                "start": 278,
+                "end": 286
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 1
+                  }
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 292,
+                  "end": 296
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 0
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 6
+                    },
+                    "span": {
+                      "start": 303,
+                      "end": 305
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 298,
+                  "end": 306
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 4
+                }
+              },
+              "params": [
+                {
+                  "kind": "Id",
+                  "index": 6,
+                  "span": {
+                    "start": 316,
+                    "end": 318
+                  }
+                }
+              ],
+              "span": {
+                "start": 310,
+                "end": 319
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 1
+                  }
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 325,
+                  "end": 329
+                }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 1
+                  }
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 331,
+                  "end": 335
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 5
+                }
+              },
+              "params": [],
+              "span": {
+                "start": 339,
+                "end": 346
+              }
+            }
+          }
+        ],
+        "span": {
+          "start": 194,
+          "end": 352
+        }
+      }
+    },
+    {
+      "name": "decompose",
+      "id": {
+        "index": 8
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [
+        {
+          "kind": "IdIntro",
+          "name": "opts",
+          "id": {
+            "index": 7
+          },
+          "span": {
+            "start": 413,
+            "end": 417
+          }
+        }
+      ],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 403,
+        "end": 418
+      },
+      "body": {
+        "kind": "Match",
+        "scrutinees": [
+          {
+            "kind": "Id",
+            "index": 7,
+            "span": {
+              "start": 430,
+              "end": 434
+            }
+          }
+        ],
+        "prongs": [
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 2
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 9
+                    },
+                    "span": {
+                      "start": 449,
+                      "end": 451
+                    }
+                  },
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 10
+                    },
+                    "span": {
+                      "start": 453,
+                      "end": 455
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 444,
+                  "end": 456
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 6
+                }
+              },
+              "params": [
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 0
+                    }
+                  },
+                  "params": [
+                    {
+                      "kind": "Id",
+                      "index": 9,
+                      "span": {
+                        "start": 470,
+                        "end": 472
+                      }
+                    }
+                  ],
+                  "span": {
+                    "start": 465,
+                    "end": 473
+                  }
+                },
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 0
+                    }
+                  },
+                  "params": [
+                    {
+                      "kind": "Id",
+                      "index": 10,
+                      "span": {
+                        "start": 480,
+                        "end": 482
+                      }
+                    }
+                  ],
+                  "span": {
+                    "start": 475,
+                    "end": 483
+                  }
+                }
+              ],
+              "span": {
+                "start": 460,
+                "end": 484
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 3
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v1",
+                    "id": {
+                      "index": 11
+                    },
+                    "span": {
+                      "start": 495,
+                      "end": 497
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 490,
+                  "end": 498
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 6
+                }
+              },
+              "params": [
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 0
+                    }
+                  },
+                  "params": [
+                    {
+                      "kind": "Id",
+                      "index": 11,
+                      "span": {
+                        "start": 512,
+                        "end": 514
+                      }
+                    }
+                  ],
+                  "span": {
+                    "start": 507,
+                    "end": 515
+                  }
+                },
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 1
+                    }
+                  },
+                  "params": [],
+                  "span": {
+                    "start": 517,
+                    "end": 521
+                  }
+                }
+              ],
+              "span": {
+                "start": 502,
+                "end": 522
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 4
+                  }
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 12
+                    },
+                    "span": {
+                      "start": 534,
+                      "end": 536
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 528,
+                  "end": 537
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 6
+                }
+              },
+              "params": [
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 1
+                    }
+                  },
+                  "params": [],
+                  "span": {
+                    "start": 546,
+                    "end": 550
+                  }
+                },
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 0
+                    }
+                  },
+                  "params": [
+                    {
+                      "kind": "Id",
+                      "index": 12,
+                      "span": {
+                        "start": 557,
+                        "end": 559
+                      }
+                    }
+                  ],
+                  "span": {
+                    "start": 552,
+                    "end": 560
+                  }
+                }
+              ],
+              "span": {
+                "start": 541,
+                "end": 561
+              }
+            }
+          },
+          {
+            "patterns": [
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Resolved": {
+                    "index": 5
+                  }
+                },
+                "subpatterns": [],
+                "span": {
+                  "start": 567,
+                  "end": 574
+                }
+              }
+            ],
+            "exp": {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 6
+                }
+              },
+              "params": [
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 1
+                    }
+                  },
+                  "params": [],
+                  "span": {
+                    "start": 583,
+                    "end": 587
+                  }
+                },
+                {
+                  "kind": "New",
+                  "name": {
+                    "Resolved": {
+                      "index": 1
+                    }
+                  },
+                  "params": [],
+                  "span": {
+                    "start": 589,
+                    "end": 593
+                  }
+                }
+              ],
+              "span": {
+                "start": 578,
+                "end": 594
+              }
+            }
+          }
+        ],
+        "span": {
+          "start": 424,
+          "end": 600
+        }
+      }
+    },
+    {
+      "name": "main",
+      "id": {
+        "index": 13
+      },
+      "duplicate": false,
+      "ty_params": [],
+      "params": [],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 625,
+        "end": 631
+      },
+      "body": {
+        "kind": "ValIn",
+        "lhs": {
+          "kind": "IdIntro",
+          "name": "a",
+          "id": {
+            "index": 14
+          },
+          "span": {
+            "start": 641,
+            "end": 642
+          }
+        },
+        "rhs": {
+          "kind": "New",
+          "name": {
+            "Resolved": {
+              "index": 0
+            }
+          },
+          "params": [
+            {
+              "kind": "New",
+              "name": {
+                "Resolved": {
+                  "index": 7
+                }
+              },
+              "params": [],
+              "span": {
+                "start": 650,
+                "end": 654
+              }
+            }
+          ],
+          "span": {
+            "start": 645,
+            "end": 655
+          }
+        },
+        "exp": {
+          "kind": "ValIn",
+          "lhs": {
+            "kind": "IdIntro",
+            "name": "b",
+            "id": {
+              "index": 15
+            },
+            "span": {
+              "start": 663,
+              "end": 664
+            }
+          },
+          "rhs": {
+            "kind": "New",
+            "name": {
+              "Resolved": {
+                "index": 1
+              }
+            },
+            "params": [],
+            "span": {
+              "start": 667,
+              "end": 671
+            }
+          },
+          "exp": {
+            "kind": "FnCall",
+            "name": {
+              "Resolved": {
+                "index": 8
+              }
+            },
+            "params": [
+              {
+                "kind": "FnCall",
+                "name": {
+                  "Resolved": {
+                    "index": 2
+                  }
+                },
+                "params": [
+                  {
+                    "kind": "Id",
+                    "index": 14,
+                    "span": {
+                      "start": 693,
+                      "end": 694
+                    }
+                  },
+                  {
+                    "kind": "Id",
+                    "index": 15,
+                    "span": {
+                      "start": 696,
+                      "end": 697
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 685,
+                  "end": 698
+                }
+              }
+            ],
+            "span": {
+              "start": 675,
+              "end": 699
+            }
+          },
+          "span": {
+            "start": 659,
+            "end": 699
+          }
+        },
+        "span": {
+          "start": 637,
+          "end": 699
+        }
+      }
+    }
+  ]
+}

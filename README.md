@@ -11,37 +11,44 @@ Typesystem of lang2 is based on Damas–Hindley–Milner typesystem, ensuring th
 Below is a simple example of what lang2 code might look like.
 
 ```
-data Color:
-  Red,
-  Green,
-  Blue.
-
-data Shape:
-  Rectangle,
-  Circle.
-
-# Option ADT
-data Option[t]:
-  Some(t),
+data Opt[a]:
+  Some(a),
   None.
 
-# Simple pair type (no tuples just yet)
+data Opt2[a, b]:
+  Both(a, b),
+  Left(a),
+  Right(b),
+  Neither.
+
 data Pair[a, b]:
   Pair(a, b).
 
-# Compose two options
-fun compose(opt1, opt2) =>
-  match opt1 with
-    Some(some1) =>
-      match opt2 with
-        Some(some2) => Pair(opt1, opt2),
-        None => None
-      end,
-    None => None
+fun compose[a, b](opt1: Opt[a], opt2: Opt[b]): Opt2[a, b] =>
+  match opt1, opt2 with
+    Some(v1), Some(v2) => Both(v1, v2),
+    Some(v1), None => Left(v1),
+    None, Some(v2) => Right(v2),
+    None, None => Neither
   end.
 
-compose(Some(Red), Some(Circle))
+# Type annotations are completely optional!
+fun decompose(opts) =>
+  match opts with
+    Both(v1, v2) => Pair(Some(v1), Some(v2)),
+    Left(v1) => Pair(Some(v1), None),
+    Right(v2) => Pair(None, Some(v2)),
+    Neither => Pair(None, None)
+  end.
+
+data Unit: Unit.
+
+fun main() =>
+  val a = Some(Unit).
+  val b = None.
+  decompose(compose(a, b)).
 ```
+
 One can note that lang2, unlike OCaml and Haskell, does not use juxtaposition for function calls. The reasons for that are as follows.
 
 * There is no plan to support currying in lang2, and juxtaposition syntax would imply its supported.
