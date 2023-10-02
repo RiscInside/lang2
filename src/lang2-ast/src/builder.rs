@@ -113,6 +113,7 @@ impl<'arena> Builder<'arena> {
                 tycons_table: vec![],
                 cons_table: vec![],
                 id_table: vec![],
+                fn_groups_count: 0,
             },
             tyvar_table: Table::new(),
             tycons_table: Table::new(),
@@ -814,7 +815,16 @@ impl<'arena> Builder<'arena> {
         }
         Exp {
             span,
-            kind: ExpKind::FunsIn(self.bump.alloc(FunsIn { fns, exp })),
+            kind: ExpKind::FunsIn(self.bump.alloc(FunsIn {
+                fns,
+                exp,
+                idx: {
+                    self.side.fn_groups_count = self.side.fn_groups_count.checked_add(1).unwrap();
+                    FunGroupIdx {
+                        index: self.side.fn_groups_count,
+                    }
+                },
+            })),
         }
     }
 

@@ -29,6 +29,14 @@ pub struct Cons {
     pub index: u32,
 }
 
+/// Function group index
+#[derive(PartialEq, Eq, Debug, Serialize, Clone)]
+pub struct FunGroupIdx {
+    pub index: u32,
+}
+
+pub static FUN_GROUP_TOP_LEVEL: FunGroupIdx = FunGroupIdx { index: 0 };
+
 /// Parenthesized value
 #[derive(PartialEq, Eq, Debug, Serialize, Clone)]
 pub struct Parenthesized<'arena, T> {
@@ -276,6 +284,8 @@ pub struct FunsIn<'arena> {
     pub fns: &'arena [Function<'arena>],
     /// Expression
     pub exp: Exp<'arena>,
+    /// Function group index
+    pub idx: FunGroupIdx,
 }
 
 /// ADT definition expression. ADTs within a group can reference each other
@@ -363,6 +373,8 @@ pub struct SideTable<'arena> {
     pub(crate) cons_table: Vec<ConsSide<'arena>>,
     /// Identifier side table
     pub(crate) id_table: Vec<IdSide<'arena>>,
+    /// Number of function groups. 0 slot is reserved for the top-level
+    fn_groups_count: u32,
 }
 
 impl<'arena> Index<TypeVar> for SideTable<'arena> {
@@ -394,6 +406,28 @@ impl<'arena> Index<Id> for SideTable<'arena> {
 
     fn index(&self, id: Id) -> &Self::Output {
         &self.id_table[id.index as usize]
+    }
+}
+
+impl SideTable<'_> {
+    pub fn tyvar_count(&mut self) -> u32 {
+        self.tyvar_table.len().try_into().unwrap()
+    }
+
+    pub fn tycons_count(&mut self) -> u32 {
+        self.tycons_table.len().try_into().unwrap()
+    }
+
+    pub fn cons_count(&mut self) -> u32 {
+        self.cons_table.len().try_into().unwrap()
+    }
+
+    pub fn id_count(&mut self) -> u32 {
+        self.id_table.len().try_into().unwrap()
+    }
+
+    pub fn fn_groups_count(&mut self) -> u32 {
+        self.fn_groups_count
     }
 }
 
