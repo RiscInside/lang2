@@ -1,0 +1,40 @@
+data Counter:
+  One,
+  Two.
+
+fun h(counter, v) =>
+  val _ = g(Two, One).
+  g(One, d(counter, v)).
+
+fun e(counter, v) =>
+  match counter with
+    Two => a(One, v),
+    One => val _ = f(Two, Two). f(Two, v)
+  end.
+
+fun f(counter, v) => g(counter, v).
+
+fun d(counter, v) =>
+  match counter with
+    Two => h(One, c(One, v)),
+    One => v
+  end.
+
+fun a(counter, v) => b(counter, v).
+
+fun g(counter, v) =>
+  match counter with
+    Two => f(One, v),
+    One => v
+  end.
+
+fun b(counter, v) =>
+  val _ = f(One, One).
+  val _ = c(Two, Two).
+  c(Two, f(One, e(counter, v))).
+
+fun c(counter, v) =>
+  val _ = g(Two, Two).
+  g(Two, d(counter, v)).
+
+fun one() => One.

@@ -1,0 +1,25 @@
+data Col:
+  Red,
+  Green,
+  Blue.
+
+fun main() =>
+  val myFavCol = Red.
+  
+  fun compute(col) =>
+    fun inner(col) =>
+      match col with
+        Red => Red,
+        Green => compute2(Red),
+        Blue => compute2(Green)
+      end.
+    
+    match myFavCol with
+      Red => Red,
+      _ => inner(col)
+    end.
+  
+  fun compute2(col) =>
+    compute(col).
+
+  compute().

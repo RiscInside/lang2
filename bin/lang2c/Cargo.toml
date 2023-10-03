@@ -7,6 +7,7 @@ description = "Lang2 compiler driver"
 [dependencies]
 lang2-ast = { path = "../../src/lang2-ast" }
 lang2-parser = { path = "../../src/lang2-parser" }
+lang2-sema = { path = "../../src/lang2-sema" }
 
 bumpalo = "3.14.0"
 clap = { version = "4.4.6", features = ["derive"] }

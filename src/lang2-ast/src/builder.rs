@@ -886,12 +886,19 @@ impl<'arena> Builder<'arena> {
     }
 
     /// Build top level
-    pub fn ast(self) -> AST<'arena> {
+    pub fn ast(mut self) -> AST<'arena> {
+        let adts = self.bump.alloc_slice_fill_iter(self.top_adts);
+        let funs = self.bump.alloc_slice_fill_iter(self.top_functions);
+        // Patch side tables
+        for adt in adts.iter() {
+            self.side.tycons_table[adt.id.index as usize].ptr = adt;
+        }
+        for fun in funs.iter() {
+            self.side.id_table[fun.id.index as usize] = IdSide::FnDef(fun);
+        }
+
         AST {
-            top: TopLevel {
-                adts: self.bump.alloc_slice_fill_iter(self.top_adts),
-                funs: self.bump.alloc_slice_fill_iter(self.top_functions),
-            },
+            top: TopLevel { adts, funs },
             side: self.side,
         }
     }

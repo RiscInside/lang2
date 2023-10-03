@@ -2,6 +2,7 @@ use bumpalo::Bump;
 use clap::Parser;
 use lang2_ast::builder::Builder;
 use lang2_parser::parse;
+use lang2_sema::preprocessing::preprocess;
 
 #[derive(Parser)]
 struct Arguments {
@@ -36,8 +37,12 @@ fn main() {
     };
 
     match cmd.as_str() {
-        "ast" => {
-            println!("{}", serde_json::to_string_pretty(&ast.top).unwrap())
+        "parse" => {
+            println!("{}", serde_json::to_string_pretty(&ast.top).unwrap());
+        }
+        "preprocess" => {
+            let preprocessed = preprocess(&ast);
+            println!("{}", serde_json::to_string_pretty(&preprocessed).unwrap());
         }
         unknown_cmd => {
             eprintln!("skill issue: command {unknown_cmd} not defined");

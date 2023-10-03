@@ -1,0 +1,12 @@
+[package]
+name = "lang2-sema"
+version = "0.1.0"
+edition = "2021"
+description = "Semantic analysis of lang2 programs and lowering to polymorphic IR"
+
+[dependencies]
+lang2-ast = { path = "../lang2-ast" }
+
+petgraph = { version = "0.6.4", features = ["serde"] }
+smallvec = { version = "1.11.1", features = ["serde"] }
+serde = { version = "1.0.188", features = ["derive"] }

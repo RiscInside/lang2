@@ -333,9 +333,9 @@ pub enum ExpKind<'arena> {
 #[derive(PartialEq, Eq, Debug, Serialize, Clone)]
 pub struct TopLevel<'arena> {
     /// Data declarations
-    adts: &'arena [ADT<'arena>],
+    pub adts: &'arena [ADT<'arena>],
     /// Function declarations
-    funs: &'arena [Function<'arena>],
+    pub funs: &'arena [Function<'arena>],
 }
 
 /// Side information for type variables
@@ -460,23 +460,23 @@ impl<'arena> IndexMut<FunGroupIdx> for SideTable<'arena> {
 }
 
 impl SideTable<'_> {
-    pub fn tyvar_count(&mut self) -> usize {
+    pub fn tyvar_count(&self) -> usize {
         self.tyvar_table.len()
     }
 
-    pub fn tycons_count(&mut self) -> usize {
+    pub fn tycons_count(&self) -> usize {
         self.tycons_table.len()
     }
 
-    pub fn cons_count(&mut self) -> usize {
+    pub fn cons_count(&self) -> usize {
         self.cons_table.len()
     }
 
-    pub fn id_count(&mut self) -> usize {
+    pub fn id_count(&self) -> usize {
         self.id_table.len()
     }
 
-    pub fn fn_groups_count(&mut self) -> usize {
+    pub fn fn_groups_count(&self) -> usize {
         self.fun_groups_table.len()
     }
 }

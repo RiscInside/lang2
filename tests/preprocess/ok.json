@@ -1,0 +1,24 @@
+{
+  "tasks": [
+    {
+      "kind": "PreprocessesTo",
+      "source": "mutual_recursion.lang2",
+      "expected": "mutual_recursion.lang2.pre.json"
+    },
+    {
+      "kind": "ParsesTo",
+      "source": "mutual_recursion.lang2",
+      "expected": "mutual_recursion.lang2.ast.json"
+    },
+    {
+      "kind": "PreprocessesTo",
+      "source": "lift.lang2",
+      "expected": "lift.lang2.pre.json"
+    },
+    {
+      "kind": "ParsesTo",
+      "source": "lift.lang2",
+      "expected": "lift.lang2.ast.json"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "worklists": {
+    "worklists": [
+      {
+        "groups": [
+          [
+            {
+              "index": 5
+            }
+          ]
+        ]
+      },
+      {
+        "groups": [
+          [
+            {
+              "index": 3
+            },
+            {
+              "index": 7
+            }
+          ]
+        ]
+      }
+    ],
+    "top_worklist": {
+      "groups": []
+    }
+  }
+}

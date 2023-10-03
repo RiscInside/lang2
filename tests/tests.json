@@ -3,6 +3,10 @@
     {
       "kind": "Include",
       "path": "parse/ok.json"
+    },
+    {
+      "kind": "Include",
+      "path": "preprocess/ok.json"
     }
   ]
 }
