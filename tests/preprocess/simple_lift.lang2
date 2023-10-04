@@ -1,0 +1,6 @@
+data Unit: Unit.
+
+fun main() =>
+  val a = Unit.
+  fun foo() => a.
+  foo().

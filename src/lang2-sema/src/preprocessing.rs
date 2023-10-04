@@ -1,11 +1,12 @@
 use bumpalo::Bump;
 use lang2_ast::{
     ADTsIn, AnnotatedExp, Exp, ExpKind, Fun, FunsIn, Id, Match, Parenthesized, RefState, SideTable,
-    ValIn, AST,
+    ValIn, Var, AST,
 };
 use petgraph::prelude::DiGraphMap;
 use serde::Serialize;
 use smallvec::SmallVec;
+use tinyset::SetU32;
 
 /// Information about function group accumulated throughout the pass
 struct FunGroupInfo {
@@ -31,6 +32,12 @@ struct Context<'arena> {
     top: FunGroupInfo,
     /// Bump allocator
     bump: &'arena Bump,
+    /// Global callgraph
+    callgraph: DiGraphMap<Fun, ()>,
+    /// Sets of free variables
+    fvs: Vec<SetU32>,
+    /// The function we are currently inside of
+    inside_of: Fun,
 }
 
 /// Assembled worklists
@@ -47,6 +54,8 @@ pub struct Worklists<'arena> {
 pub struct Preprocessed<'arena> {
     /// Worklists for typechecking
     worklists: Worklists<'arena>,
+    /// Approximate free variables sets
+    fvs: &'arena [&'arena [Var]],
 }
 
 impl<'arena> Context<'arena> {
@@ -60,9 +69,15 @@ impl<'arena> Context<'arena> {
         match exp.kind {
             ExpKind::Parenthesized(Parenthesized { inner }) => self.visit_exp(inner, side, bump),
             ExpKind::Id(_) => {}
-            ExpKind::FreeId(_) => {}
+            ExpKind::FreeId(state) => match state.get() {
+                RefState::Resolved(Id::Var(id)) => {
+                    self.fvs[self.inside_of.index as usize].insert(id.index);
+                }
+                _ => {}
+            },
             ExpKind::FnCall(call) => {
                 if let RefState::Resolved(Id::Fun(fun)) = call.name.get() {
+                    self.callgraph.add_edge(self.inside_of, fun, ());
                     let def = side[fun].ptr;
                     let group = match &def.fn_group {
                         Some(id) => &mut self.live_groups[id.index as usize],
@@ -108,6 +123,7 @@ impl<'arena> Context<'arena> {
         side: &'arena SideTable<'arena>,
         bump: &'arena Bump,
     ) {
+        let currently_inside_of = self.inside_of;
         // Push a new function group
         assert_eq!(funs_in.idx.index as usize, self.live_groups.len());
         self.live_groups.push(FunGroupInfo {
@@ -115,21 +131,25 @@ impl<'arena> Context<'arena> {
             inside_of: None,
         });
         for fun in funs_in.fns {
+            self.callgraph.add_node(fun.id);
             self.live_groups
                 .last_mut()
                 .unwrap()
                 .callgraph
                 .add_node(fun.id);
             // Enter the function
+            self.inside_of = fun.id;
             self.live_groups[funs_in.idx.index as usize].inside_of = Some(fun.id);
             // Run the analysis on the body
             self.visit_exp(&fun.body, side, bump);
         }
         // Pop function group
-        assert_eq!(funs_in.idx.index as usize, self.live_groups.len() - 1);
-        let group = self.live_groups.pop().unwrap();
-        let callgraph = self.assemble_worklist(group.callgraph, side, bump);
-        self.worklists.push(callgraph);
+        let callgraph = std::mem::take(&mut self.live_groups.last_mut().unwrap().callgraph);
+        let worklist = self.assemble_worklist(callgraph, side, bump);
+        self.worklists.push(worklist);
+
+        self.inside_of = currently_inside_of;
+        self.visit_exp(&funs_in.exp, side, bump);
     }
 
     fn assemble_worklist(
@@ -151,6 +171,7 @@ impl<'arena> Context<'arena> {
     fn visit_ast(&mut self, ast: &'arena AST<'arena>) -> Worklist<'arena> {
         for fun in ast.top.funs {
             self.top.inside_of = Some(fun.id);
+            self.inside_of = fun.id;
             self.visit_exp(&fun.body, &ast.side, self.bump);
         }
         let callgraph = std::mem::take(&mut self.top.callgraph);
@@ -159,6 +180,8 @@ impl<'arena> Context<'arena> {
 }
 
 pub fn preprocess<'arena>(ast: &'arena AST<'arena>, bump: &'arena Bump) -> Preprocessed<'arena> {
+    let mut fvs = vec![];
+    fvs.resize_with(ast.side.fns_count(), || Default::default());
     let mut context: Context<'arena> = Context {
         live_groups: vec![],
         worklists: vec![],
@@ -167,14 +190,40 @@ pub fn preprocess<'arena>(ast: &'arena AST<'arena>, bump: &'arena Bump) -> Prepr
             inside_of: None,
         },
         bump,
+        fvs,
+        callgraph: DiGraphMap::with_capacity(ast.side.fns_count(), ast.side.fns_count()),
+        inside_of: Fun { index: 0 },
     };
 
     let top_worklist = context.visit_ast(ast);
+
+    let condensed = petgraph::algo::condensation(context.callgraph.into_graph::<u32>(), true);
+    let mut fvs_for_sccs: Vec<&'arena [Var]> = vec![&[]; condensed.node_count()];
+    let fvs_for_funs: &mut [&[Var]] = bump.alloc_slice_fill_default(ast.side.fns_count());
+
+    let mut top = petgraph::visit::Topo::new(&condensed);
+    while let Some(scc) = top.next(&condensed) {
+        let funs = &condensed[scc];
+        let mut scc_fvs_set = SetU32::new();
+        for fun in funs {
+            scc_fvs_set.extend(std::mem::take(&mut context.fvs[fun.index as usize]));
+        }
+        for dep_scc in condensed.neighbors(scc) {
+            scc_fvs_set.extend(fvs_for_sccs[dep_scc.index()].iter().map(|&var| var.index));
+        }
+        let fvs: Vec<Var> = scc_fvs_set.iter().map(|index| Var { index }).collect();
+        fvs_for_sccs[scc.index()] = bump.alloc_slice_fill_iter(fvs);
+        for fun in funs {
+            fvs_for_funs[fun.index as usize] = fvs_for_sccs[scc.index()];
+        }
+    }
+
     let worklists = context.worklists;
     Preprocessed {
         worklists: Worklists {
             worklists: worklists,
             top_worklist: top_worklist,
         },
+        fvs: fvs_for_funs,
     }
 }

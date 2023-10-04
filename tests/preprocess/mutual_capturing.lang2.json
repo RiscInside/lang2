@@ -5,19 +5,10 @@
         "groups": [
           [
             {
-              "index": 2
-            }
-          ]
-        ]
-      },
-      {
-        "groups": [
-          [
-            {
               "index": 1
             },
             {
-              "index": 3
+              "index": 2
             }
           ]
         ]
@@ -26,5 +17,18 @@
     "top_worklist": {
       "groups": []
     }
-  }
+  },
+  "fvs": [
+    [],
+    [
+      {
+        "index": 0
+      }
+    ],
+    [
+      {
+        "index": 0
+      }
+    ]
+  ]
 }
