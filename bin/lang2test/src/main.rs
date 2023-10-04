@@ -71,7 +71,7 @@ impl FunctionOfSource {
                 let Ok(ast) = parse(&source, Builder::new(&bump)) else {
                     return None;
                 };
-                let preprocessed = preprocess(&ast);
+                let preprocessed = preprocess(&ast, &bump);
                 serde_json::to_string_pretty(&preprocessed).unwrap()
             }
         })

@@ -234,6 +234,7 @@ dependencies = [
 name = "lang2-sema"
 version = "0.1.0"
 dependencies = [
+ "bumpalo",
  "lang2-ast",
  "petgraph",
  "serde",

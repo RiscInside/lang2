@@ -1,10 +1,11 @@
+use bumpalo::Bump;
 use lang2_ast::{
     ADTsIn, AnnotatedExp, Exp, ExpKind, Fun, FunsIn, Id, Match, Parenthesized, RefState, SideTable,
     ValIn, AST,
 };
 use petgraph::prelude::DiGraphMap;
 use serde::Serialize;
-use smallvec::{SmallVec, ToSmallVec};
+use smallvec::SmallVec;
 
 /// Information about function group accumulated throughout the pass
 struct FunGroupInfo {
@@ -16,41 +17,48 @@ struct FunGroupInfo {
 
 /// Worklist for function group typechecking
 #[derive(Default, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Worklist {
-    groups: SmallVec<[SmallVec<[Fun; 1]>; 2]>,
+pub struct Worklist<'arena> {
+    groups: &'arena [&'arena [Fun]],
 }
 
 /// Context of the preprocessing pass
-struct Context {
+struct Context<'arena> {
     /// Information about each function group currently being visited
     live_groups: Vec<FunGroupInfo>,
     /// Assembled worklists
-    worklists: Vec<Worklist>,
+    worklists: Vec<Worklist<'arena>>,
     /// Top-level info
     top: FunGroupInfo,
+    /// Bump allocator
+    bump: &'arena Bump,
 }
 
 /// Assembled worklists
 #[derive(Default, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Worklists {
+pub struct Worklists<'arena> {
     /// Worklists for nested function groups
-    worklists: Vec<Worklist>,
+    worklists: Vec<Worklist<'arena>>,
     /// Worklist for the top level
-    top_worklist: Worklist,
+    top_worklist: Worklist<'arena>,
 }
 
 /// Results of the preprocessing pass
 #[derive(Default, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Preprocessed {
+pub struct Preprocessed<'arena> {
     /// Worklists for typechecking
-    worklists: Worklists,
+    worklists: Worklists<'arena>,
 }
 
-impl Context {
+impl<'arena> Context<'arena> {
     /// Recursively visit expression, updating analysis information
-    fn visit_exp<'arena>(&mut self, exp: &'arena Exp<'arena>, side: &'arena SideTable<'arena>) {
+    fn visit_exp(
+        &mut self,
+        exp: &'arena Exp<'arena>,
+        side: &'arena SideTable<'arena>,
+        bump: &'arena Bump,
+    ) {
         match exp.kind {
-            ExpKind::Parenthesized(Parenthesized { inner }) => self.visit_exp(inner, side),
+            ExpKind::Parenthesized(Parenthesized { inner }) => self.visit_exp(inner, side, bump),
             ExpKind::Id(_) => {}
             ExpKind::FreeId(_) => {}
             ExpKind::FnCall(call) => {
@@ -65,39 +73,40 @@ impl Context {
                     }
                 }
                 for param in call.params {
-                    self.visit_exp(param, side);
+                    self.visit_exp(param, side, bump);
                 }
             }
             ExpKind::New(call) => {
                 for param in call.params {
-                    self.visit_exp(param, side);
+                    self.visit_exp(param, side, bump);
                 }
             }
             ExpKind::Match(&Match { scrutinees, prongs }) => {
                 for scrutinee in scrutinees {
-                    self.visit_exp(scrutinee, side);
+                    self.visit_exp(scrutinee, side, bump);
                 }
                 for prong in prongs {
-                    self.visit_exp(&prong.exp, side);
+                    self.visit_exp(&prong.exp, side, bump);
                 }
             }
             ExpKind::Annotated(AnnotatedExp { exp, .. }) => {
-                self.visit_exp(exp, side);
+                self.visit_exp(exp, side, bump);
             }
             ExpKind::ValIn(ValIn { rhs, exp, .. }) => {
-                self.visit_exp(rhs, side);
-                self.visit_exp(exp, side);
+                self.visit_exp(rhs, side, bump);
+                self.visit_exp(exp, side, bump);
             }
             ExpKind::FunsIn(funs) => {
-                self.visit_funs_in(funs, side);
+                self.visit_funs_in(funs, side, bump);
             }
-            ExpKind::ADTsIn(ADTsIn { exp, .. }) => self.visit_exp(exp, side),
+            ExpKind::ADTsIn(ADTsIn { exp, .. }) => self.visit_exp(exp, side, bump),
         }
     }
-    fn visit_funs_in<'arena>(
+    fn visit_funs_in(
         &mut self,
         funs_in: &'arena FunsIn<'arena>,
         side: &'arena SideTable<'arena>,
+        bump: &'arena Bump,
     ) {
         // Push a new function group
         assert_eq!(funs_in.idx.index as usize, self.live_groups.len());
@@ -114,52 +123,57 @@ impl Context {
             // Enter the function
             self.live_groups[funs_in.idx.index as usize].inside_of = Some(fun.id);
             // Run the analysis on the body
-            self.visit_exp(&fun.body, side);
+            self.visit_exp(&fun.body, side, bump);
         }
         // Pop function group
         assert_eq!(funs_in.idx.index as usize, self.live_groups.len() - 1);
         let group = self.live_groups.pop().unwrap();
-        let callgraph = self.assemble_worklist(group.callgraph, side);
+        let callgraph = self.assemble_worklist(group.callgraph, side, bump);
         self.worklists.push(callgraph);
     }
 
-    fn assemble_worklist<'arena>(
+    fn assemble_worklist(
         &mut self,
         callgraph: DiGraphMap<Fun, ()>,
         side: &'arena SideTable<'arena>,
-    ) -> Worklist {
-        let mut worklist = Worklist::default();
+        bump: &'arena Bump,
+    ) -> Worklist<'arena> {
+        let mut groups = SmallVec::<[&'arena [Fun]; 4]>::new();
         for mut scc in petgraph::algo::tarjan_scc(&callgraph) {
             scc.sort_by_key(|&fun| side[fun].ptr.decl_span);
-            worklist.groups.push(scc.to_smallvec());
+            groups.push(bump.alloc_slice_fill_iter(scc));
         }
-        worklist
+        Worklist {
+            groups: bump.alloc_slice_fill_iter(groups.into_iter()),
+        }
     }
 
-    fn visit_ast<'arena>(&mut self, ast: &'arena AST<'arena>) -> Worklist {
+    fn visit_ast(&mut self, ast: &'arena AST<'arena>) -> Worklist<'arena> {
         for fun in ast.top.funs {
             self.top.inside_of = Some(fun.id);
-            self.visit_exp(&fun.body, &ast.side);
+            self.visit_exp(&fun.body, &ast.side, self.bump);
         }
         let callgraph = std::mem::take(&mut self.top.callgraph);
-        self.assemble_worklist(callgraph, &ast.side)
+        self.assemble_worklist(callgraph, &ast.side, self.bump)
     }
 }
 
-pub fn preprocess<'arena>(ast: &'arena AST<'arena>) -> Preprocessed {
-    let mut context = Context {
+pub fn preprocess<'arena>(ast: &'arena AST<'arena>, bump: &'arena Bump) -> Preprocessed<'arena> {
+    let mut context: Context<'arena> = Context {
         live_groups: vec![],
         worklists: vec![],
         top: FunGroupInfo {
             callgraph: DiGraphMap::with_capacity(ast.top.funs.len(), 0),
             inside_of: None,
         },
+        bump,
     };
 
     let top_worklist = context.visit_ast(ast);
+    let worklists = context.worklists;
     Preprocessed {
         worklists: Worklists {
-            worklists: context.worklists,
+            worklists: worklists,
             top_worklist: top_worklist,
         },
     }

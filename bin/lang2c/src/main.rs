@@ -41,7 +41,7 @@ fn main() {
             println!("{}", serde_json::to_string_pretty(&ast.top).unwrap());
         }
         "preprocess" => {
-            let preprocessed = preprocess(&ast);
+            let preprocessed = preprocess(&ast, &bump);
             println!("{}", serde_json::to_string_pretty(&preprocessed).unwrap());
         }
         unknown_cmd => {

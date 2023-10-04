@@ -7,6 +7,7 @@ description = "Semantic analysis of lang2 programs and lowering to polymorphic I
 [dependencies]
 lang2-ast = { path = "../lang2-ast" }
 
+bumpalo = "3.14.0"
 petgraph = { version = "0.6.4", features = ["serde"] }
 smallvec = { version = "1.11.1", features = ["serde"] }
 serde = { version = "1.0.188", features = ["derive"] }
