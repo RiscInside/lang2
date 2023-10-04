@@ -1,0 +1,474 @@
+{
+  "adts": [],
+  "funs": [
+    {
+      "name": "main",
+      "id": {
+        "index": 0
+      },
+      "fn_group": null,
+      "duplicate": false,
+      "ty_params": [],
+      "params": [
+        {
+          "kind": "IdIntro",
+          "name": "arg",
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 9,
+            "end": 12
+          }
+        }
+      ],
+      "ret_ty": null,
+      "decl_span": {
+        "start": 4,
+        "end": 13
+      },
+      "body": {
+        "kind": "ADTsIn",
+        "adts": [
+          {
+            "name": "Counter",
+            "duplicate": false,
+            "id": {
+              "index": 0
+            },
+            "params": [],
+            "decl_span": {
+              "start": 19,
+              "end": 19
+            },
+            "variants": [
+              {
+                "name": "One",
+                "duplicate": false,
+                "id": {
+                  "index": 0
+                },
+                "span": {
+                  "start": 37,
+                  "end": 40
+                },
+                "tys": []
+              },
+              {
+                "name": "Two",
+                "duplicate": false,
+                "id": {
+                  "index": 1
+                },
+                "span": {
+                  "start": 46,
+                  "end": 49
+                },
+                "tys": []
+              },
+              {
+                "name": "Three",
+                "duplicate": false,
+                "id": {
+                  "index": 2
+                },
+                "span": {
+                  "start": 55,
+                  "end": 60
+                },
+                "tys": []
+              }
+            ]
+          }
+        ],
+        "exp": {
+          "kind": "FunsIn",
+          "fns": [
+            {
+              "name": "foo",
+              "id": {
+                "index": 1
+              },
+              "fn_group": {
+                "index": 0
+              },
+              "duplicate": false,
+              "ty_params": [],
+              "params": [
+                {
+                  "kind": "IdIntro",
+                  "name": "v",
+                  "id": {
+                    "index": 1
+                  },
+                  "span": {
+                    "start": 75,
+                    "end": 76
+                  }
+                }
+              ],
+              "ret_ty": null,
+              "decl_span": {
+                "start": 71,
+                "end": 77
+              },
+              "body": {
+                "kind": "Match",
+                "scrutinees": [
+                  {
+                    "kind": "Id",
+                    "Var": {
+                      "index": 1
+                    },
+                    "span": {
+                      "start": 91,
+                      "end": 92
+                    }
+                  }
+                ],
+                "prongs": [
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 0
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 104,
+                          "end": 107
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FreeId",
+                      "Resolved": {
+                        "Var": {
+                          "index": 0
+                        }
+                      },
+                      "span": {
+                        "start": 111,
+                        "end": 114
+                      }
+                    }
+                  },
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 1
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 122,
+                          "end": 125
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FnCall",
+                      "name": {
+                        "Resolved": {
+                          "Fun": {
+                            "index": 2
+                          }
+                        }
+                      },
+                      "params": [
+                        {
+                          "kind": "New",
+                          "name": {
+                            "Resolved": {
+                              "index": 0
+                            }
+                          },
+                          "params": [],
+                          "span": {
+                            "start": 133,
+                            "end": 136
+                          }
+                        }
+                      ],
+                      "span": {
+                        "start": 129,
+                        "end": 137
+                      }
+                    }
+                  },
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 2
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 145,
+                          "end": 150
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FnCall",
+                      "name": {
+                        "Resolved": {
+                          "Fun": {
+                            "index": 2
+                          }
+                        }
+                      },
+                      "params": [
+                        {
+                          "kind": "New",
+                          "name": {
+                            "Resolved": {
+                              "index": 1
+                            }
+                          },
+                          "params": [],
+                          "span": {
+                            "start": 158,
+                            "end": 161
+                          }
+                        }
+                      ],
+                      "span": {
+                        "start": 154,
+                        "end": 162
+                      }
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 85,
+                  "end": 171
+                }
+              }
+            },
+            {
+              "name": "bar",
+              "id": {
+                "index": 2
+              },
+              "fn_group": {
+                "index": 0
+              },
+              "duplicate": false,
+              "ty_params": [],
+              "params": [
+                {
+                  "kind": "IdIntro",
+                  "name": "v",
+                  "id": {
+                    "index": 2
+                  },
+                  "span": {
+                    "start": 186,
+                    "end": 187
+                  }
+                }
+              ],
+              "ret_ty": null,
+              "decl_span": {
+                "start": 182,
+                "end": 188
+              },
+              "body": {
+                "kind": "Match",
+                "scrutinees": [
+                  {
+                    "kind": "Id",
+                    "Var": {
+                      "index": 2
+                    },
+                    "span": {
+                      "start": 202,
+                      "end": 203
+                    }
+                  }
+                ],
+                "prongs": [
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 0
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 215,
+                          "end": 218
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FreeId",
+                      "Resolved": {
+                        "Var": {
+                          "index": 0
+                        }
+                      },
+                      "span": {
+                        "start": 222,
+                        "end": 225
+                      }
+                    }
+                  },
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 1
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 233,
+                          "end": 236
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FnCall",
+                      "name": {
+                        "Resolved": {
+                          "Fun": {
+                            "index": 1
+                          }
+                        }
+                      },
+                      "params": [
+                        {
+                          "kind": "New",
+                          "name": {
+                            "Resolved": {
+                              "index": 0
+                            }
+                          },
+                          "params": [],
+                          "span": {
+                            "start": 244,
+                            "end": 247
+                          }
+                        }
+                      ],
+                      "span": {
+                        "start": 240,
+                        "end": 248
+                      }
+                    }
+                  },
+                  {
+                    "patterns": [
+                      {
+                        "kind": "Destruct",
+                        "name": {
+                          "Resolved": {
+                            "index": 2
+                          }
+                        },
+                        "subpatterns": [],
+                        "span": {
+                          "start": 256,
+                          "end": 261
+                        }
+                      }
+                    ],
+                    "exp": {
+                      "kind": "FnCall",
+                      "name": {
+                        "Resolved": {
+                          "Fun": {
+                            "index": 1
+                          }
+                        }
+                      },
+                      "params": [
+                        {
+                          "kind": "New",
+                          "name": {
+                            "Resolved": {
+                              "index": 1
+                            }
+                          },
+                          "params": [],
+                          "span": {
+                            "start": 269,
+                            "end": 272
+                          }
+                        }
+                      ],
+                      "span": {
+                        "start": 265,
+                        "end": 273
+                      }
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 196,
+                  "end": 281
+                }
+              }
+            }
+          ],
+          "exp": {
+            "kind": "FnCall",
+            "name": {
+              "Resolved": {
+                "Fun": {
+                  "index": 1
+                }
+              }
+            },
+            "params": [
+              {
+                "kind": "New",
+                "name": {
+                  "Resolved": {
+                    "index": 2
+                  }
+                },
+                "params": [],
+                "span": {
+                  "start": 292,
+                  "end": 297
+                }
+              }
+            ],
+            "span": {
+              "start": 288,
+              "end": 298
+            }
+          },
+          "idx": {
+            "index": 0
+          },
+          "span": {
+            "start": 67,
+            "end": 298
+          }
+        },
+        "span": {
+          "start": 19,
+          "end": 298
+        }
+      }
+    }
+  ]
+}

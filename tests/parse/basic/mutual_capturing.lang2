@@ -1,0 +1,21 @@
+fun main(arg) =>
+  data Counter:
+    One,
+    Two,
+    Three.
+  
+  fun foo(v) =>
+    match v with
+      One => arg,
+      Two => bar(One),
+      Three => bar(Two) 
+    end.
+  
+  fun bar(v) =>
+    match v with
+      One => arg,
+      Two => foo(One),
+      Three => foo(Two)
+    end.
+  
+  foo(Three).

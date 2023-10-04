@@ -99,6 +99,11 @@
       "kind": "ParsesTo",
       "source": "opts_compose.lang2",
       "expected": "opts_compose.lang2.json"
+    },
+    {
+      "kind": "ParsesTo",
+      "source": "mutual_capturing.lang2",
+      "expected": "mutual_capturing.lang2.json"
     }
   ]
 }

@@ -96,6 +96,8 @@ pub struct ADTGroupContext<'arena> {
 pub struct FunctionHead<'arena> {
     /// Name
     name: &'arena str,
+    /// Delayed counter on entry
+    delayed: usize,
     /// Identifier referring to the function
     id: Fun,
     /// Is a duplicate?
@@ -484,12 +486,16 @@ impl<'arena> Builder<'arena> {
     }
 
     /// Pop bindings from a pattern, handing delayed resolutions
-    fn pattern_outro_handle_delayed(&mut self, pat: &Pattern<'arena>, scope: usize) {
+    fn pattern_outro_handle_delayed(
+        &mut self,
+        pat: &Pattern<'arena>,
+        remembered_delayed_cnt: usize,
+    ) {
         self.visit_pattern(
             pat,
             &mut |this, id| {
                 this.direct_id_table.pop(id.name);
-                this.resolve_delayed(id.name, scope, Id::Var(id.id));
+                this.resolve_delayed(id.name, remembered_delayed_cnt, Id::Var(id.id));
             },
             true,
         )
@@ -777,6 +783,7 @@ impl<'arena> Builder<'arena> {
         }
         FunctionHead {
             name,
+            delayed: self.delayed_id_resolutions_cnt,
             id,
             duplicate,
             params,
@@ -794,8 +801,14 @@ impl<'arena> Builder<'arena> {
         body: Exp<'arena>,
     ) -> Function<'arena> {
         self.tys_outro(head.ty_params);
-        for param in head.params.iter().rev() {
-            self.pattern_outro(param);
+        if head.delayed == self.delayed_id_resolutions_cnt {
+            for param in head.params.iter().rev() {
+                self.pattern_outro(param);
+            }
+        } else {
+            for param in head.params.iter().rev() {
+                self.pattern_outro_handle_delayed(param, head.delayed);
+            }
         }
         Function {
             name: head.name,
