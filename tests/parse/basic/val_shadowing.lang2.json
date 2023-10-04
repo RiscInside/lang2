@@ -21,7 +21,7 @@
           "kind": "IdIntro",
           "name": "a",
           "id": {
-            "index": 1
+            "index": 0
           },
           "span": {
             "start": 20,
@@ -45,7 +45,7 @@
             "kind": "IdIntro",
             "name": "a",
             "id": {
-              "index": 2
+              "index": 1
             },
             "span": {
               "start": 36,
@@ -54,7 +54,9 @@
           },
           "rhs": {
             "kind": "Id",
-            "index": 1,
+            "Var": {
+              "index": 0
+            },
             "span": {
               "start": 40,
               "end": 41
@@ -68,7 +70,9 @@
             "params": [
               {
                 "kind": "Id",
-                "index": 2,
+                "Var": {
+                  "index": 1
+                },
                 "span": {
                   "start": 49,
                   "end": 50
@@ -76,7 +80,9 @@
               },
               {
                 "kind": "Id",
-                "index": 2,
+                "Var": {
+                  "index": 1
+                },
                 "span": {
                   "start": 52,
                   "end": 53

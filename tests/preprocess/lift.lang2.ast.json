@@ -72,7 +72,7 @@
           "kind": "IdIntro",
           "name": "myFavCol",
           "id": {
-            "index": 1
+            "index": 0
           },
           "span": {
             "start": 55,
@@ -98,7 +98,7 @@
             {
               "name": "compute",
               "id": {
-                "index": 3
+                "index": 1
               },
               "fn_group": {
                 "index": 0
@@ -110,7 +110,7 @@
                   "kind": "IdIntro",
                   "name": "col",
                   "id": {
-                    "index": 2
+                    "index": 1
                   },
                   "span": {
                     "start": 88,
@@ -129,7 +129,7 @@
                   {
                     "name": "inner",
                     "id": {
-                      "index": 5
+                      "index": 2
                     },
                     "fn_group": {
                       "index": 1
@@ -141,7 +141,7 @@
                         "kind": "IdIntro",
                         "name": "col",
                         "id": {
-                          "index": 4
+                          "index": 2
                         },
                         "span": {
                           "start": 110,
@@ -159,7 +159,9 @@
                       "scrutinees": [
                         {
                           "kind": "Id",
-                          "index": 4,
+                          "Var": {
+                            "index": 2
+                          },
                           "span": {
                             "start": 130,
                             "end": 133
@@ -217,7 +219,9 @@
                             "kind": "FnCall",
                             "name": {
                               "Resolved": {
-                                "index": 7
+                                "Fun": {
+                                  "index": 3
+                                }
                               }
                             },
                             "params": [
@@ -261,7 +265,9 @@
                             "kind": "FnCall",
                             "name": {
                               "Resolved": {
-                                "index": 7
+                                "Fun": {
+                                  "index": 3
+                                }
                               }
                             },
                             "params": [
@@ -299,7 +305,9 @@
                     {
                       "kind": "FreeId",
                       "Resolved": {
-                        "index": 1
+                        "Var": {
+                          "index": 0
+                        }
                       },
                       "span": {
                         "start": 249,
@@ -352,13 +360,17 @@
                         "kind": "FnCall",
                         "name": {
                           "Resolved": {
-                            "index": 5
+                            "Fun": {
+                              "index": 2
+                            }
                           }
                         },
                         "params": [
                           {
                             "kind": "Id",
-                            "index": 2,
+                            "Var": {
+                              "index": 1
+                            },
                             "span": {
                               "start": 298,
                               "end": 301
@@ -389,7 +401,7 @@
             {
               "name": "compute2",
               "id": {
-                "index": 7
+                "index": 3
               },
               "fn_group": {
                 "index": 0
@@ -401,7 +413,7 @@
                   "kind": "IdIntro",
                   "name": "col",
                   "id": {
-                    "index": 6
+                    "index": 3
                   },
                   "span": {
                     "start": 330,
@@ -418,13 +430,17 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 3
+                    "Fun": {
+                      "index": 1
+                    }
                   }
                 },
                 "params": [
                   {
                     "kind": "Id",
-                    "index": 6,
+                    "Var": {
+                      "index": 3
+                    },
                     "span": {
                       "start": 350,
                       "end": 353
@@ -442,7 +458,9 @@
             "kind": "FnCall",
             "name": {
               "Resolved": {
-                "index": 3
+                "Fun": {
+                  "index": 1
+                }
               }
             },
             "params": [],

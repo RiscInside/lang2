@@ -40,7 +40,7 @@
                     "kind": "IdIntro",
                     "name": "a",
                     "id": {
-                      "index": 1
+                      "index": 0
                     },
                     "span": {
                       "start": 41,
@@ -51,7 +51,7 @@
                     "kind": "IdIntro",
                     "name": "a",
                     "id": {
-                      "index": 2
+                      "index": 1
                     },
                     "span": {
                       "start": 44,
@@ -67,7 +67,9 @@
             ],
             "exp": {
               "kind": "Id",
-              "index": 2,
+              "Var": {
+                "index": 1
+              },
               "span": {
                 "start": 50,
                 "end": 51

@@ -9,29 +9,56 @@
       "fn_group": null,
       "duplicate": false,
       "ty_params": [],
-      "params": [],
+      "params": [
+        {
+          "kind": "IdIntro",
+          "name": "opt1",
+          "id": {
+            "index": 0
+          },
+          "span": {
+            "start": 9,
+            "end": 13
+          }
+        },
+        {
+          "kind": "IdIntro",
+          "name": "opt2",
+          "id": {
+            "index": 1
+          },
+          "span": {
+            "start": 15,
+            "end": 19
+          }
+        }
+      ],
       "ret_ty": null,
       "decl_span": {
         "start": 4,
-        "end": 10
+        "end": 20
       },
       "body": {
         "kind": "Match",
         "scrutinees": [
           {
-            "kind": "FreeId",
-            "Unresolved": "opt1",
+            "kind": "Id",
+            "Var": {
+              "index": 0
+            },
             "span": {
-              "start": 22,
-              "end": 26
+              "start": 32,
+              "end": 36
             }
           },
           {
-            "kind": "FreeId",
-            "Unresolved": "opt2",
+            "kind": "Id",
+            "Var": {
+              "index": 1
+            },
             "span": {
-              "start": 28,
-              "end": 32
+              "start": 38,
+              "end": 42
             }
           }
         ],
@@ -48,17 +75,17 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 1
+                      "index": 2
                     },
                     "span": {
-                      "start": 47,
-                      "end": 49
+                      "start": 57,
+                      "end": 59
                     }
                   }
                 ],
                 "span": {
-                  "start": 42,
-                  "end": 50
+                  "start": 52,
+                  "end": 60
                 }
               },
               {
@@ -68,8 +95,8 @@
                 },
                 "subpatterns": [],
                 "span": {
-                  "start": 52,
-                  "end": 56
+                  "start": 62,
+                  "end": 66
                 }
               }
             ],
@@ -81,16 +108,18 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 1,
+                  "Var": {
+                    "index": 2
+                  },
                   "span": {
-                    "start": 66,
-                    "end": 68
+                    "start": 76,
+                    "end": 78
                   }
                 }
               ],
               "span": {
-                "start": 60,
-                "end": 69
+                "start": 70,
+                "end": 79
               }
             }
           },
@@ -103,8 +132,8 @@
                 },
                 "subpatterns": [],
                 "span": {
-                  "start": 75,
-                  "end": 79
+                  "start": 85,
+                  "end": 89
                 }
               },
               {
@@ -117,17 +146,17 @@
                     "kind": "IdIntro",
                     "name": "v2",
                     "id": {
-                      "index": 2
+                      "index": 3
                     },
                     "span": {
-                      "start": 86,
-                      "end": 88
+                      "start": 96,
+                      "end": 98
                     }
                   }
                 ],
                 "span": {
-                  "start": 81,
-                  "end": 89
+                  "start": 91,
+                  "end": 99
                 }
               }
             ],
@@ -139,16 +168,18 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 2,
+                  "Var": {
+                    "index": 3
+                  },
                   "span": {
-                    "start": 99,
-                    "end": 101
+                    "start": 109,
+                    "end": 111
                   }
                 }
               ],
               "span": {
-                "start": 93,
-                "end": 102
+                "start": 103,
+                "end": 112
               }
             }
           },
@@ -164,29 +195,6 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 3
-                    },
-                    "span": {
-                      "start": 113,
-                      "end": 115
-                    }
-                  }
-                ],
-                "span": {
-                  "start": 108,
-                  "end": 116
-                }
-              },
-              {
-                "kind": "Destruct",
-                "name": {
-                  "Unresolved": "Some"
-                },
-                "subpatterns": [
-                  {
-                    "kind": "IdIntro",
-                    "name": "v2",
-                    "id": {
                       "index": 4
                     },
                     "span": {
@@ -199,6 +207,29 @@
                   "start": 118,
                   "end": 126
                 }
+              },
+              {
+                "kind": "Destruct",
+                "name": {
+                  "Unresolved": "Some"
+                },
+                "subpatterns": [
+                  {
+                    "kind": "IdIntro",
+                    "name": "v2",
+                    "id": {
+                      "index": 5
+                    },
+                    "span": {
+                      "start": 133,
+                      "end": 135
+                    }
+                  }
+                ],
+                "span": {
+                  "start": 128,
+                  "end": 136
+                }
               }
             ],
             "exp": {
@@ -209,24 +240,28 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 3,
+                  "Var": {
+                    "index": 4
+                  },
                   "span": {
-                    "start": 135,
-                    "end": 137
+                    "start": 145,
+                    "end": 147
                   }
                 },
                 {
                   "kind": "Id",
-                  "index": 4,
+                  "Var": {
+                    "index": 5
+                  },
                   "span": {
-                    "start": 139,
-                    "end": 141
+                    "start": 149,
+                    "end": 151
                   }
                 }
               ],
               "span": {
-                "start": 130,
-                "end": 142
+                "start": 140,
+                "end": 152
               }
             }
           },
@@ -235,15 +270,15 @@
               {
                 "kind": "Underscore",
                 "span": {
-                  "start": 148,
-                  "end": 149
+                  "start": 158,
+                  "end": 159
                 }
               },
               {
                 "kind": "Underscore",
                 "span": {
-                  "start": 151,
-                  "end": 152
+                  "start": 161,
+                  "end": 162
                 }
               }
             ],
@@ -254,15 +289,15 @@
               },
               "params": [],
               "span": {
-                "start": 156,
-                "end": 163
+                "start": 166,
+                "end": 173
               }
             }
           }
         ],
         "span": {
-          "start": 16,
-          "end": 169
+          "start": 26,
+          "end": 179
         }
       }
     }

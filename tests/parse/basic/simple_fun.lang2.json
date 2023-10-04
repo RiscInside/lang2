@@ -31,7 +31,7 @@
     {
       "name": "foo",
       "id": {
-        "index": 2
+        "index": 0
       },
       "fn_group": null,
       "duplicate": false,
@@ -69,13 +69,17 @@
         "kind": "FnCall",
         "name": {
           "Resolved": {
-            "index": 2
+            "Fun": {
+              "index": 0
+            }
           }
         },
         "params": [
           {
             "kind": "Id",
-            "index": 0,
+            "Var": {
+              "index": 0
+            },
             "span": {
               "start": 43,
               "end": 44
@@ -83,7 +87,9 @@
           },
           {
             "kind": "Id",
-            "index": 1,
+            "Var": {
+              "index": 1
+            },
             "span": {
               "start": 46,
               "end": 47
@@ -99,7 +105,7 @@
     {
       "name": "main",
       "id": {
-        "index": 3
+        "index": 1
       },
       "fn_group": null,
       "duplicate": false,
@@ -114,7 +120,9 @@
         "kind": "FnCall",
         "name": {
           "Resolved": {
-            "index": 2
+            "Fun": {
+              "index": 0
+            }
           }
         },
         "params": [

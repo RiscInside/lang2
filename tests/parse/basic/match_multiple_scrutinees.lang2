@@ -1,4 +1,4 @@
-fun main() =>
+fun main(opt1, opt2) =>
   match opt1, opt2 with
     Some(v1), None => Unary(v1),
     None, Some(v2) => Unary(v2),

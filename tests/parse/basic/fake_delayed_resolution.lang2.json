@@ -85,7 +85,9 @@
                     "kind": "FnCall",
                     "name": {
                       "Resolved": {
-                        "index": 0
+                        "Fun": {
+                          "index": 0
+                        }
                       }
                     },
                     "params": [],
@@ -100,7 +102,9 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 3
+                    "Fun": {
+                      "index": 3
+                    }
                   }
                 },
                 "params": [],
@@ -123,7 +127,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 2
+              "Fun": {
+                "index": 2
+              }
             }
           },
           "params": [],

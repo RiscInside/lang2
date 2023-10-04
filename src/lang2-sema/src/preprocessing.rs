@@ -1,6 +1,6 @@
 use lang2_ast::{
-    ADTsIn, AnnotatedExp, Exp, ExpKind, FunsIn, Id, IdSide, Match, Parenthesized, RefState,
-    SideTable, ValIn, AST,
+    ADTsIn, AnnotatedExp, Exp, ExpKind, Fun, FunsIn, Id, Match, Parenthesized, RefState, SideTable,
+    ValIn, AST,
 };
 use petgraph::prelude::DiGraphMap;
 use serde::Serialize;
@@ -9,15 +9,15 @@ use smallvec::{SmallVec, ToSmallVec};
 /// Information about function group accumulated throughout the pass
 struct FunGroupInfo {
     /// Callgraph of functions within the group
-    callgraph: DiGraphMap<Id, ()>,
+    callgraph: DiGraphMap<Fun, ()>,
     /// Function that belongs to this group pass in currently inside of (if any)
-    inside_of: Option<Id>,
+    inside_of: Option<Fun>,
 }
 
 /// Worklist for function group typechecking
 #[derive(Default, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Worklist {
-    groups: SmallVec<[SmallVec<[Id; 1]>; 2]>,
+    groups: SmallVec<[SmallVec<[Fun; 1]>; 2]>,
 }
 
 /// Context of the preprocessing pass
@@ -54,15 +54,14 @@ impl Context {
             ExpKind::Id(_) => {}
             ExpKind::FreeId(_) => {}
             ExpKind::FnCall(call) => {
-                if let RefState::Resolved(id) = call.name.get() {
-                    if let IdSide::FnDef(def) = &side[id] {
-                        let group = match &def.fn_group {
-                            Some(id) => &mut self.live_groups[id.index as usize],
-                            None => &mut self.top,
-                        };
-                        if let Some(inside_of) = group.inside_of {
-                            group.callgraph.add_edge(inside_of, id, ());
-                        }
+                if let RefState::Resolved(Id::Fun(fun)) = call.name.get() {
+                    let def = side[fun].ptr;
+                    let group = match &def.fn_group {
+                        Some(id) => &mut self.live_groups[id.index as usize],
+                        None => &mut self.top,
+                    };
+                    if let Some(inside_of) = group.inside_of {
+                        group.callgraph.add_edge(inside_of, fun, ());
                     }
                 }
                 for param in call.params {
@@ -126,15 +125,12 @@ impl Context {
 
     fn assemble_worklist<'arena>(
         &mut self,
-        callgraph: DiGraphMap<Id, ()>,
+        callgraph: DiGraphMap<Fun, ()>,
         side: &'arena SideTable<'arena>,
     ) -> Worklist {
         let mut worklist = Worklist::default();
         for mut scc in petgraph::algo::tarjan_scc(&callgraph) {
-            scc.sort_by_key(|key| match side[*key] {
-                IdSide::IdPtr { .. } => unreachable!(),
-                IdSide::FnDef(def) => def.decl_span,
-            });
+            scc.sort_by_key(|&fun| side[fun].ptr.decl_span);
             worklist.groups.push(scc.to_smallvec());
         }
         worklist

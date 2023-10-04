@@ -276,7 +276,7 @@
     {
       "name": "compose",
       "id": {
-        "index": 2
+        "index": 0
       },
       "fn_group": null,
       "duplicate": false,
@@ -425,7 +425,9 @@
         "scrutinees": [
           {
             "kind": "Id",
-            "index": 0,
+            "Var": {
+              "index": 0
+            },
             "span": {
               "start": 200,
               "end": 204
@@ -433,7 +435,9 @@
           },
           {
             "kind": "Id",
-            "index": 1,
+            "Var": {
+              "index": 1
+            },
             "span": {
               "start": 206,
               "end": 210
@@ -455,7 +459,7 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 3
+                      "index": 2
                     },
                     "span": {
                       "start": 225,
@@ -480,7 +484,7 @@
                     "kind": "IdIntro",
                     "name": "v2",
                     "id": {
-                      "index": 4
+                      "index": 3
                     },
                     "span": {
                       "start": 235,
@@ -504,7 +508,9 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 3,
+                  "Var": {
+                    "index": 2
+                  },
                   "span": {
                     "start": 247,
                     "end": 249
@@ -512,7 +518,9 @@
                 },
                 {
                   "kind": "Id",
-                  "index": 4,
+                  "Var": {
+                    "index": 3
+                  },
                   "span": {
                     "start": 251,
                     "end": 253
@@ -539,7 +547,7 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 5
+                      "index": 4
                     },
                     "span": {
                       "start": 265,
@@ -576,7 +584,9 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 5,
+                  "Var": {
+                    "index": 4
+                  },
                   "span": {
                     "start": 283,
                     "end": 285
@@ -616,7 +626,7 @@
                     "kind": "IdIntro",
                     "name": "v2",
                     "id": {
-                      "index": 6
+                      "index": 5
                     },
                     "span": {
                       "start": 303,
@@ -640,7 +650,9 @@
               "params": [
                 {
                   "kind": "Id",
-                  "index": 6,
+                  "Var": {
+                    "index": 5
+                  },
                   "span": {
                     "start": 316,
                     "end": 318
@@ -706,7 +718,7 @@
     {
       "name": "decompose",
       "id": {
-        "index": 8
+        "index": 1
       },
       "fn_group": null,
       "duplicate": false,
@@ -716,7 +728,7 @@
           "kind": "IdIntro",
           "name": "opts",
           "id": {
-            "index": 7
+            "index": 6
           },
           "span": {
             "start": 413,
@@ -734,7 +746,9 @@
         "scrutinees": [
           {
             "kind": "Id",
-            "index": 7,
+            "Var": {
+              "index": 6
+            },
             "span": {
               "start": 430,
               "end": 434
@@ -756,7 +770,7 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 9
+                      "index": 7
                     },
                     "span": {
                       "start": 449,
@@ -767,7 +781,7 @@
                     "kind": "IdIntro",
                     "name": "v2",
                     "id": {
-                      "index": 10
+                      "index": 8
                     },
                     "span": {
                       "start": 453,
@@ -799,7 +813,9 @@
                   "params": [
                     {
                       "kind": "Id",
-                      "index": 9,
+                      "Var": {
+                        "index": 7
+                      },
                       "span": {
                         "start": 470,
                         "end": 472
@@ -821,7 +837,9 @@
                   "params": [
                     {
                       "kind": "Id",
-                      "index": 10,
+                      "Var": {
+                        "index": 8
+                      },
                       "span": {
                         "start": 480,
                         "end": 482
@@ -854,7 +872,7 @@
                     "kind": "IdIntro",
                     "name": "v1",
                     "id": {
-                      "index": 11
+                      "index": 9
                     },
                     "span": {
                       "start": 495,
@@ -886,7 +904,9 @@
                   "params": [
                     {
                       "kind": "Id",
-                      "index": 11,
+                      "Var": {
+                        "index": 9
+                      },
                       "span": {
                         "start": 512,
                         "end": 514
@@ -932,7 +952,7 @@
                     "kind": "IdIntro",
                     "name": "v2",
                     "id": {
-                      "index": 12
+                      "index": 10
                     },
                     "span": {
                       "start": 534,
@@ -977,7 +997,9 @@
                   "params": [
                     {
                       "kind": "Id",
-                      "index": 12,
+                      "Var": {
+                        "index": 10
+                      },
                       "span": {
                         "start": 557,
                         "end": 559
@@ -1063,7 +1085,7 @@
     {
       "name": "main",
       "id": {
-        "index": 13
+        "index": 2
       },
       "fn_group": null,
       "duplicate": false,
@@ -1080,7 +1102,7 @@
           "kind": "IdIntro",
           "name": "a",
           "id": {
-            "index": 14
+            "index": 11
           },
           "span": {
             "start": 641,
@@ -1120,7 +1142,7 @@
             "kind": "IdIntro",
             "name": "b",
             "id": {
-              "index": 15
+              "index": 12
             },
             "span": {
               "start": 663,
@@ -1144,7 +1166,9 @@
             "kind": "FnCall",
             "name": {
               "Resolved": {
-                "index": 8
+                "Fun": {
+                  "index": 1
+                }
               }
             },
             "params": [
@@ -1152,13 +1176,17 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 2
+                    "Fun": {
+                      "index": 0
+                    }
                   }
                 },
                 "params": [
                   {
                     "kind": "Id",
-                    "index": 14,
+                    "Var": {
+                      "index": 11
+                    },
                     "span": {
                       "start": 693,
                       "end": 694
@@ -1166,7 +1194,9 @@
                   },
                   {
                     "kind": "Id",
-                    "index": 15,
+                    "Var": {
+                      "index": 12
+                    },
                     "span": {
                       "start": 696,
                       "end": 697

@@ -5,13 +5,6 @@ use std::collections::{HashMap, HashSet};
 
 use crate::*;
 
-/// Sentinel value for reserving slots in the identifier side table
-/// Should not be pointed to once AST construction is done
-const ID_SENTINEL: IdPattern<'static> = IdPattern {
-    name: "Congrats, you have found a bug, please report it",
-    id: Id { index: 0xfffffffe },
-};
-
 /// Delayed resolution of the identifier
 pub struct DelayedId<'arena> {
     /// Pointer to the cell to resolve
@@ -49,6 +42,8 @@ pub struct Builder<'arena> {
     adt_sentinel: &'arena ADT<'arena>,
     /// Variant sentinel (fake variant to point to to reserve the slot)
     variant_sentinel: &'arena Variant<'arena>,
+    /// Function sentinel
+    fun_sentinel: &'arena Function<'arena>,
     /// Funs in sentinel
     funs_sentinel: &'arena FunsIn<'arena>,
 }
@@ -102,7 +97,7 @@ pub struct FunctionHead<'arena> {
     /// Name
     name: &'arena str,
     /// Identifier referring to the function
-    id: Id,
+    id: Fun,
     /// Is a duplicate?
     duplicate: bool,
     /// Type parameters
@@ -124,7 +119,8 @@ impl<'arena> Builder<'arena> {
                 tyvar_table: vec![],
                 tycons_table: vec![],
                 cons_table: vec![],
-                id_table: vec![],
+                var_table: vec![],
+                fun_table: vec![],
                 fun_groups_table: vec![],
             },
             tyvar_table: Table::new(),
@@ -151,10 +147,24 @@ impl<'arena> Builder<'arena> {
                 span: Span { start: 84, end: 19 },
                 tys: &[],
             }),
+            fun_sentinel: bump.alloc(Function {
+                name: "",
+                id: Fun { index: 0xfffffff7 },
+                fn_group: None,
+                duplicate: false,
+                ty_params: &[],
+                params: &[],
+                ret_ty: None,
+                decl_span: Span { start: 84, end: 19 },
+                body: Exp {
+                    kind: ExpKind::Id(Id::Var(Var { index: 0xfffffff5 })),
+                    span: Span { start: 84, end: 19 },
+                },
+            }),
             funs_sentinel: bump.alloc(FunsIn {
                 fns: &[],
                 exp: Exp {
-                    kind: ExpKind::Id(Id { index: 0xfffffff9 }),
+                    kind: ExpKind::Id(Id::Fun(Fun { index: 0xfffffff9 })),
                     span: Span { start: 84, end: 19 },
                 },
                 idx: FunGroupIdx { index: 0xfffffff8 },
@@ -268,11 +278,11 @@ impl<'arena> Builder<'arena> {
     /// Build variable pattern
     pub fn build_id_pat(&mut self, name: &str, span: Span) -> Pattern<'arena> {
         let name = self.bump.alloc_str(name);
-        let id = Id {
-            index: self.side.id_table.len().try_into().unwrap(),
+        let id = Var {
+            index: self.side.var_table.len().try_into().unwrap(),
         };
         let id_intro: &IdPattern<'arena> = self.bump.alloc(IdPattern { name, id });
-        self.side.id_table.push(IdSide::IdPtr {
+        self.side.var_table.push(VarSide {
             ptr: id_intro,
             span,
         });
@@ -463,7 +473,7 @@ impl<'arena> Builder<'arena> {
     fn pattern_intro(&mut self, pat: &Pattern<'arena>) {
         self.visit_pattern(
             pat,
-            &mut |this, id| this.direct_id_table.push(id.name, id.id),
+            &mut |this, id| this.direct_id_table.push(id.name, Id::Var(id.id)),
             false,
         );
     }
@@ -479,7 +489,7 @@ impl<'arena> Builder<'arena> {
             pat,
             &mut |this, id| {
                 this.direct_id_table.pop(id.name);
-                this.resolve_delayed(id.name, scope, id.id);
+                this.resolve_delayed(id.name, scope, Id::Var(id.id));
             },
             true,
         )
@@ -750,16 +760,15 @@ impl<'arena> Builder<'arena> {
     ) -> FunctionHead<'arena> {
         // Reserve slot in the side table in the function, but don't fill it yet
         let name = self.bump.alloc_str(name) as &str;
-        let id = Id {
-            index: self.side.id_table.len().try_into().unwrap(),
+        let id = Fun {
+            index: self.side.fun_table.len().try_into().unwrap(),
         };
         let duplicate = self.direct_id_table.contains_key(&name);
         if !duplicate {
-            self.direct_id_table.push(name, id);
+            self.direct_id_table.push(name, Id::Fun(id));
         }
-        self.side.id_table.push(IdSide::IdPtr {
-            ptr: &ID_SENTINEL,
-            span: Span { start: 19, end: 84 },
+        self.side.fun_table.push(FunSide {
+            ptr: self.fun_sentinel,
         });
 
         let params = self.bump.alloc_slice_fill_iter(params);
@@ -814,16 +823,16 @@ impl<'arena> Builder<'arena> {
         if self.delayed_id_resolutions_cnt != head.delayed {
             for function in functions.iter().rev() {
                 if !function.duplicate {
-                    self.resolve_delayed(function.name, head.delayed, function.id);
+                    self.resolve_delayed(function.name, head.delayed, Id::Fun(function.id));
                 }
             }
         }
         // Reroute side tables and make bindings available for the child expression
         let mut direct_id_table = head.direct_id_table;
         for function in functions.iter() {
-            self.side.id_table[function.id.index as usize] = IdSide::FnDef(function);
+            self.side.fun_table[function.id.index as usize] = FunSide { ptr: function };
             if !function.duplicate {
-                direct_id_table.push(function.name, function.id);
+                direct_id_table.push(function.name, Id::Fun(function.id));
             }
         }
         self.direct_id_table = direct_id_table;
@@ -866,7 +875,7 @@ impl<'arena> Builder<'arena> {
         if let Some(delayed) = self.delayed_id_resolutions.remove(fun.name) {
             //  Duplicates must have been resolved
             for DelayedId { idref, .. } in delayed {
-                idref.set(RefState::Resolved(fun.id));
+                idref.set(RefState::Resolved(Id::Fun(fun.id)));
             }
         }
         self.top_functions.push(fun);
@@ -894,7 +903,7 @@ impl<'arena> Builder<'arena> {
             self.side.tycons_table[adt.id.index as usize].ptr = adt;
         }
         for fun in funs.iter() {
-            self.side.id_table[fun.id.index as usize] = IdSide::FnDef(fun);
+            self.side.fun_table[fun.id.index as usize] = FunSide { ptr: fun };
         }
 
         AST {

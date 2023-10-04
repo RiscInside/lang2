@@ -21,10 +21,23 @@ pub struct TypeCons {
     pub index: u32,
 }
 
-/// Identifier
+/// Variable identifier
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize, Hash)]
-pub struct Id {
+pub struct Var {
     pub index: u32,
+}
+
+/// Function identifier
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize, Hash)]
+pub struct Fun {
+    pub index: u32,
+}
+
+/// Any kind of identifier (either variable or function)
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Serialize, Deserialize, Hash)]
+pub enum Id {
+    Var(Var),
+    Fun(Fun),
 }
 
 /// Constructor name
@@ -155,8 +168,8 @@ pub enum TyKind<'arena> {
 pub struct Function<'arena> {
     /// Name of the function
     pub name: &'arena str,
-    /// Identifier ID
-    pub id: Id,
+    /// Function ID
+    pub id: Fun,
     /// Function group ID
     pub fn_group: Option<FunGroupIdx>,
     /// True if duplicate
@@ -189,7 +202,7 @@ pub struct IdPattern<'arena> {
     /// Name of the identifier
     pub name: &'arena str,
     /// Introduced identifier
-    pub id: Id,
+    pub id: Var,
 }
 
 /// Destructuring variant
@@ -350,15 +363,18 @@ pub struct TypeConsSide<'arena> {
     pub ptr: &'arena ADT<'arena>,
 }
 
-/// Side information for identifiers
-pub enum IdSide<'arena> {
-    /// Pointer to the pattern where ID has been declared
-    IdPtr {
-        ptr: &'arena IdPattern<'arena>,
-        span: Span,
-    },
-    /// Pointer to the function definition
-    FnDef(&'arena Function<'arena>),
+/// Side information for variable identifiers
+pub struct VarSide<'arena> {
+    /// Pointer to the declaration
+    pub ptr: &'arena IdPattern<'arena>,
+    /// Span of the declaration
+    pub span: Span,
+}
+
+/// Side information for function identifiers
+pub struct FunSide<'arena> {
+    /// Pointer to the declaration
+    pub ptr: &'arena Function<'arena>,
 }
 
 /// Side information for type constructors
@@ -383,8 +399,10 @@ pub struct SideTable<'arena> {
     pub(crate) tycons_table: Vec<TypeConsSide<'arena>>,
     /// Constructors side table
     pub(crate) cons_table: Vec<ConsSide<'arena>>,
-    /// Identifier side table
-    pub(crate) id_table: Vec<IdSide<'arena>>,
+    /// Variable identifier side table
+    pub(crate) var_table: Vec<VarSide<'arena>>,
+    /// Function identifier side table
+    pub(crate) fun_table: Vec<FunSide<'arena>>,
     /// Number of function groups
     pub(crate) fun_groups_table: Vec<FunGroupSide<'arena>>,
 }
@@ -413,11 +431,19 @@ impl<'arena> Index<Cons> for SideTable<'arena> {
     }
 }
 
-impl<'arena> Index<Id> for SideTable<'arena> {
-    type Output = IdSide<'arena>;
+impl<'arena> Index<Var> for SideTable<'arena> {
+    type Output = VarSide<'arena>;
 
-    fn index(&self, id: Id) -> &Self::Output {
-        &self.id_table[id.index as usize]
+    fn index(&self, id: Var) -> &Self::Output {
+        &self.var_table[id.index as usize]
+    }
+}
+
+impl<'arena> Index<Fun> for SideTable<'arena> {
+    type Output = FunSide<'arena>;
+
+    fn index(&self, id: Fun) -> &Self::Output {
+        &self.fun_table[id.index as usize]
     }
 }
 
@@ -447,9 +473,15 @@ impl<'arena> IndexMut<Cons> for SideTable<'arena> {
     }
 }
 
-impl<'arena> IndexMut<Id> for SideTable<'arena> {
-    fn index_mut(&mut self, id: Id) -> &mut Self::Output {
-        &mut self.id_table[id.index as usize]
+impl<'arena> IndexMut<Var> for SideTable<'arena> {
+    fn index_mut(&mut self, id: Var) -> &mut Self::Output {
+        &mut self.var_table[id.index as usize]
+    }
+}
+
+impl<'arena> IndexMut<Fun> for SideTable<'arena> {
+    fn index_mut(&mut self, id: Fun) -> &mut Self::Output {
+        &mut self.fun_table[id.index as usize]
     }
 }
 
@@ -472,8 +504,12 @@ impl SideTable<'_> {
         self.cons_table.len()
     }
 
-    pub fn id_count(&self) -> usize {
-        self.id_table.len()
+    pub fn vars_count(&self) -> usize {
+        self.var_table.len()
+    }
+
+    pub fn fns_count(&self) -> usize {
+        self.fun_table.len()
     }
 
     pub fn fn_groups_count(&self) -> usize {

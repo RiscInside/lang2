@@ -43,7 +43,7 @@
     {
       "name": "h",
       "id": {
-        "index": 2
+        "index": 0
       },
       "fn_group": null,
       "duplicate": false,
@@ -90,7 +90,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 17
+              "Fun": {
+                "index": 5
+              }
             }
           },
           "params": [
@@ -130,7 +132,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 17
+              "Fun": {
+                "index": 5
+              }
             }
           },
           "params": [
@@ -151,13 +155,17 @@
               "kind": "FnCall",
               "name": {
                 "Resolved": {
-                  "index": 11
+                  "Fun": {
+                    "index": 3
+                  }
                 }
               },
               "params": [
                 {
                   "kind": "Id",
-                  "index": 0,
+                  "Var": {
+                    "index": 0
+                  },
                   "span": {
                     "start": 84,
                     "end": 91
@@ -165,7 +173,9 @@
                 },
                 {
                   "kind": "Id",
-                  "index": 1,
+                  "Var": {
+                    "index": 1
+                  },
                   "span": {
                     "start": 93,
                     "end": 94
@@ -192,7 +202,7 @@
     {
       "name": "e",
       "id": {
-        "index": 5
+        "index": 1
       },
       "fn_group": null,
       "duplicate": false,
@@ -202,7 +212,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 3
+            "index": 2
           },
           "span": {
             "start": 105,
@@ -213,7 +223,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 4
+            "index": 3
           },
           "span": {
             "start": 114,
@@ -231,7 +241,9 @@
         "scrutinees": [
           {
             "kind": "Id",
-            "index": 3,
+            "Var": {
+              "index": 2
+            },
             "span": {
               "start": 128,
               "end": 135
@@ -259,7 +271,9 @@
               "kind": "FnCall",
               "name": {
                 "Resolved": {
-                  "index": 14
+                  "Fun": {
+                    "index": 4
+                  }
                 }
               },
               "params": [
@@ -278,7 +292,9 @@
                 },
                 {
                   "kind": "Id",
-                  "index": 4,
+                  "Var": {
+                    "index": 3
+                  },
                   "span": {
                     "start": 159,
                     "end": 160
@@ -320,7 +336,9 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 8
+                    "Fun": {
+                      "index": 2
+                    }
                   }
                 },
                 "params": [
@@ -360,7 +378,9 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 8
+                    "Fun": {
+                      "index": 2
+                    }
                   }
                 },
                 "params": [
@@ -379,7 +399,9 @@
                   },
                   {
                     "kind": "Id",
-                    "index": 4,
+                    "Var": {
+                      "index": 3
+                    },
                     "span": {
                       "start": 202,
                       "end": 203
@@ -407,7 +429,7 @@
     {
       "name": "f",
       "id": {
-        "index": 8
+        "index": 2
       },
       "fn_group": null,
       "duplicate": false,
@@ -417,7 +439,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 6
+            "index": 4
           },
           "span": {
             "start": 219,
@@ -428,7 +450,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 7
+            "index": 5
           },
           "span": {
             "start": 228,
@@ -445,13 +467,17 @@
         "kind": "FnCall",
         "name": {
           "Resolved": {
-            "index": 17
+            "Fun": {
+              "index": 5
+            }
           }
         },
         "params": [
           {
             "kind": "Id",
-            "index": 6,
+            "Var": {
+              "index": 4
+            },
             "span": {
               "start": 236,
               "end": 243
@@ -459,7 +485,9 @@
           },
           {
             "kind": "Id",
-            "index": 7,
+            "Var": {
+              "index": 5
+            },
             "span": {
               "start": 245,
               "end": 246
@@ -475,7 +503,7 @@
     {
       "name": "d",
       "id": {
-        "index": 11
+        "index": 3
       },
       "fn_group": null,
       "duplicate": false,
@@ -485,7 +513,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 9
+            "index": 6
           },
           "span": {
             "start": 256,
@@ -496,7 +524,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 10
+            "index": 7
           },
           "span": {
             "start": 265,
@@ -514,7 +542,9 @@
         "scrutinees": [
           {
             "kind": "Id",
-            "index": 9,
+            "Var": {
+              "index": 6
+            },
             "span": {
               "start": 279,
               "end": 286
@@ -542,7 +572,9 @@
               "kind": "FnCall",
               "name": {
                 "Resolved": {
-                  "index": 2
+                  "Fun": {
+                    "index": 0
+                  }
                 }
               },
               "params": [
@@ -563,7 +595,9 @@
                   "kind": "FnCall",
                   "name": {
                     "Resolved": {
-                      "index": 23
+                      "Fun": {
+                        "index": 7
+                      }
                     }
                   },
                   "params": [
@@ -582,7 +616,9 @@
                     },
                     {
                       "kind": "Id",
-                      "index": 10,
+                      "Var": {
+                        "index": 7
+                      },
                       "span": {
                         "start": 317,
                         "end": 318
@@ -619,7 +655,9 @@
             ],
             "exp": {
               "kind": "Id",
-              "index": 10,
+              "Var": {
+                "index": 7
+              },
               "span": {
                 "start": 333,
                 "end": 334
@@ -636,7 +674,7 @@
     {
       "name": "a",
       "id": {
-        "index": 14
+        "index": 4
       },
       "fn_group": null,
       "duplicate": false,
@@ -646,7 +684,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 12
+            "index": 8
           },
           "span": {
             "start": 349,
@@ -657,7 +695,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 13
+            "index": 9
           },
           "span": {
             "start": 358,
@@ -674,13 +712,17 @@
         "kind": "FnCall",
         "name": {
           "Resolved": {
-            "index": 20
+            "Fun": {
+              "index": 6
+            }
           }
         },
         "params": [
           {
             "kind": "Id",
-            "index": 12,
+            "Var": {
+              "index": 8
+            },
             "span": {
               "start": 366,
               "end": 373
@@ -688,7 +730,9 @@
           },
           {
             "kind": "Id",
-            "index": 13,
+            "Var": {
+              "index": 9
+            },
             "span": {
               "start": 375,
               "end": 376
@@ -704,7 +748,7 @@
     {
       "name": "g",
       "id": {
-        "index": 17
+        "index": 5
       },
       "fn_group": null,
       "duplicate": false,
@@ -714,7 +758,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 15
+            "index": 10
           },
           "span": {
             "start": 386,
@@ -725,7 +769,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 16
+            "index": 11
           },
           "span": {
             "start": 395,
@@ -743,7 +787,9 @@
         "scrutinees": [
           {
             "kind": "Id",
-            "index": 15,
+            "Var": {
+              "index": 10
+            },
             "span": {
               "start": 409,
               "end": 416
@@ -771,7 +817,9 @@
               "kind": "FnCall",
               "name": {
                 "Resolved": {
-                  "index": 8
+                  "Fun": {
+                    "index": 2
+                  }
                 }
               },
               "params": [
@@ -790,7 +838,9 @@
                 },
                 {
                   "kind": "Id",
-                  "index": 16,
+                  "Var": {
+                    "index": 11
+                  },
                   "span": {
                     "start": 440,
                     "end": 441
@@ -821,7 +871,9 @@
             ],
             "exp": {
               "kind": "Id",
-              "index": 16,
+              "Var": {
+                "index": 11
+              },
               "span": {
                 "start": 455,
                 "end": 456
@@ -838,7 +890,7 @@
     {
       "name": "b",
       "id": {
-        "index": 20
+        "index": 6
       },
       "fn_group": null,
       "duplicate": false,
@@ -848,7 +900,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 18
+            "index": 12
           },
           "span": {
             "start": 471,
@@ -859,7 +911,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 19
+            "index": 13
           },
           "span": {
             "start": 480,
@@ -885,7 +937,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 8
+              "Fun": {
+                "index": 2
+              }
             }
           },
           "params": [
@@ -934,7 +988,9 @@
             "kind": "FnCall",
             "name": {
               "Resolved": {
-                "index": 23
+                "Fun": {
+                  "index": 7
+                }
               }
             },
             "params": [
@@ -974,7 +1030,9 @@
             "kind": "FnCall",
             "name": {
               "Resolved": {
-                "index": 23
+                "Fun": {
+                  "index": 7
+                }
               }
             },
             "params": [
@@ -995,7 +1053,9 @@
                 "kind": "FnCall",
                 "name": {
                   "Resolved": {
-                    "index": 8
+                    "Fun": {
+                      "index": 2
+                    }
                   }
                 },
                 "params": [
@@ -1016,13 +1076,17 @@
                     "kind": "FnCall",
                     "name": {
                       "Resolved": {
-                        "index": 5
+                        "Fun": {
+                          "index": 1
+                        }
                       }
                     },
                     "params": [
                       {
                         "kind": "Id",
-                        "index": 18,
+                        "Var": {
+                          "index": 12
+                        },
                         "span": {
                           "start": 550,
                           "end": 557
@@ -1030,7 +1094,9 @@
                       },
                       {
                         "kind": "Id",
-                        "index": 19,
+                        "Var": {
+                          "index": 13
+                        },
                         "span": {
                           "start": 559,
                           "end": 560
@@ -1068,7 +1134,7 @@
     {
       "name": "c",
       "id": {
-        "index": 23
+        "index": 7
       },
       "fn_group": null,
       "duplicate": false,
@@ -1078,7 +1144,7 @@
           "kind": "IdIntro",
           "name": "counter",
           "id": {
-            "index": 21
+            "index": 14
           },
           "span": {
             "start": 572,
@@ -1089,7 +1155,7 @@
           "kind": "IdIntro",
           "name": "v",
           "id": {
-            "index": 22
+            "index": 15
           },
           "span": {
             "start": 581,
@@ -1115,7 +1181,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 17
+              "Fun": {
+                "index": 5
+              }
             }
           },
           "params": [
@@ -1155,7 +1223,9 @@
           "kind": "FnCall",
           "name": {
             "Resolved": {
-              "index": 17
+              "Fun": {
+                "index": 5
+              }
             }
           },
           "params": [
@@ -1176,13 +1246,17 @@
               "kind": "FnCall",
               "name": {
                 "Resolved": {
-                  "index": 11
+                  "Fun": {
+                    "index": 3
+                  }
                 }
               },
               "params": [
                 {
                   "kind": "Id",
-                  "index": 21,
+                  "Var": {
+                    "index": 14
+                  },
                   "span": {
                     "start": 621,
                     "end": 628
@@ -1190,7 +1264,9 @@
                 },
                 {
                   "kind": "Id",
-                  "index": 22,
+                  "Var": {
+                    "index": 15
+                  },
                   "span": {
                     "start": 630,
                     "end": 631
@@ -1217,7 +1293,7 @@
     {
       "name": "one",
       "id": {
-        "index": 24
+        "index": 8
       },
       "fn_group": null,
       "duplicate": false,

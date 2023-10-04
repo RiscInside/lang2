@@ -74,7 +74,7 @@
           "kind": "IdIntro",
           "name": "a",
           "id": {
-            "index": 1
+            "index": 0
           },
           "span": {
             "start": 69,
@@ -98,7 +98,7 @@
             "kind": "IdIntro",
             "name": "b",
             "id": {
-              "index": 2
+              "index": 1
             },
             "span": {
               "start": 85,
