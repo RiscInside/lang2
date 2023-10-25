@@ -6,7 +6,7 @@ description = "Parser for the lang2 based on peg.rs crate"
 
 [dependencies]
 lang2-ast = { path = "../lang2-ast" }
-lang2-span = { path = "../lang2-span" }
+lang2-misc = { path = "../lang2-misc" }
 
 logos = "0.13.0"
 smallvec = "1.11.1"

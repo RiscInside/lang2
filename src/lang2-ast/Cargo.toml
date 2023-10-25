@@ -5,7 +5,7 @@ edition = "2021"
 description = "Abstract syntax trees for lang2 programs"
 
 [dependencies]
-lang2-span = { path = "../lang2-span" }
+lang2-misc = { path = "../lang2-misc" }
 lang2-shadow = { path = "../lang2-shadow" }
 
 bumpalo = "3.14.0"

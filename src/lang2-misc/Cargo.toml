@@ -1,5 +1,5 @@
 [package]
-name = "lang2-span"
+name = "lang2-misc"
 version = "0.1.0"
 edition = "2021"
 description = "Source spans in the lang2 program"

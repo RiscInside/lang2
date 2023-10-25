@@ -8,6 +8,7 @@ description = "Lang2 test suite runner"
 lang2-ast = { path = "../../src/lang2-ast" }
 lang2-parser = { path = "../../src/lang2-parser" }
 lang2-sema = { path = "../../src/lang2-sema" }
+lang2-misc = { path = "../../src/lang2-misc" }
 
 bumpalo = "3.14.0"
 serde_json = "1.0.107"

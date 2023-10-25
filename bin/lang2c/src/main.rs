@@ -1,6 +1,7 @@
 use bumpalo::Bump;
 use clap::Parser;
 use lang2_ast::builder::Builder;
+use lang2_misc::Errors;
 use lang2_parser::parse;
 use lang2_sema::preprocessing::preprocess;
 
@@ -19,6 +20,7 @@ fn main() {
     let _remaining: Vec<String> = args.collect();
 
     let bump = Bump::new();
+    let mut errors = Errors::new();
 
     let file_source = if let Ok(source) = std::fs::read_to_string(&path) {
         source
@@ -29,21 +31,29 @@ fn main() {
 
     let ast = {
         let builder = Builder::new(&bump);
-        let exp = parse(&*file_source, builder);
-        match exp {
-            Ok(exp) => exp,
-            Err(err) => unreachable!("{err:?}"),
-        }
+        parse(&*file_source, builder, &mut errors)
     };
 
     match cmd.as_str() {
-        "parse" => {
-            println!("{}", serde_json::to_string_pretty(&ast.top).unwrap());
-        }
-        "preprocess" => {
-            let preprocessed = preprocess(&ast, &bump);
-            println!("{}", serde_json::to_string_pretty(&preprocessed).unwrap());
-        }
+        "parse" => match ast {
+            Some(ast) => {
+                println!("{}", serde_json::to_string_pretty(&ast.top).unwrap());
+            }
+            None => {
+                eprintln!("skill issue, see error dump below:");
+                println!("{}", serde_json::to_string_pretty(&errors).unwrap());
+            }
+        },
+        "preprocess" => match ast {
+            Some(ast) => {
+                let preprocessed = preprocess(&ast, &bump);
+                println!("{}", serde_json::to_string_pretty(&preprocessed).unwrap());
+            }
+            None => {
+                eprintln!("skill issue, see error dump below:");
+                println!("{}", serde_json::to_string_pretty(&errors).unwrap());
+            }
+        },
         unknown_cmd => {
             eprintln!("skill issue: command {unknown_cmd} not defined");
         }

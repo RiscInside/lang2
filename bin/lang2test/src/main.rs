@@ -1,6 +1,7 @@
 use bumpalo::Bump;
 use clap::Parser;
 use lang2_ast::builder::Builder;
+use lang2_misc::Errors;
 use lang2_parser::parse;
 use lang2_sema::preprocessing::preprocess;
 use owo_colors::OwoColorize;
@@ -58,23 +59,23 @@ impl FunctionOfSource {
         }
     }
 
-    fn run(self, source: String, bump: &mut Bump) -> Option<String> {
+    fn run(self, source: String, bump: &mut Bump) -> Result<String, Errors> {
         bump.reset();
-        Some(match self {
-            FunctionOfSource::Parse => {
-                let Ok(ast) = parse(&source, Builder::new(&bump)) else {
-                    return None;
-                };
-                serde_json::to_string_pretty(&ast.top).unwrap()
-            }
+        let mut errors = Errors::new();
+        let ast = parse(&source, Builder::new(&bump), &mut errors);
+        match self {
+            FunctionOfSource::Parse => match ast {
+                Some(ast) => Ok(serde_json::to_string_pretty(&ast.top).unwrap()),
+                None => Err(errors),
+            },
             FunctionOfSource::Preprocess => {
-                let Ok(ast) = parse(&source, Builder::new(&bump)) else {
-                    return None;
+                let ast = match ast {
+                    Some(ast) => ast,
+                    None => return Err(errors),
                 };
-                let preprocessed = preprocess(&ast, &bump);
-                serde_json::to_string_pretty(&preprocessed).unwrap()
+                Ok(serde_json::to_string_pretty(&preprocess(&ast, &bump)).unwrap())
             }
-        })
+        }
     }
 }
 
@@ -133,19 +134,24 @@ impl TestRunner {
         } else {
             std::fs::read_to_string(&expected_path).unwrap()
         };
-        let Some(mut res) = function.run(source, bump) else {
-            println!(
-                "> {} {} for {}",
-                function.name().bold(),
-                "failed to run".bright_red().bold(),
-                source_path.display().underline(),
-            );
+        let mut res = match function.run(source, bump) {
+            Ok(res) => res,
+            Err(errors) => {
+                println!(
+                    "> {} {} for {}",
+                    function.name().bold(),
+                    "failed to run".bright_red().bold(),
+                    source_path.display().underline(),
+                );
+                println!("JSON error dump:");
+                println!("{}", serde_json::to_string_pretty(&errors).unwrap());
 
-            self.failed.push(Failure::Failed {
-                function: function,
-                path: source_path.to_path_buf(),
-            });
-            return;
+                self.failed.push(Failure::Failed {
+                    function: function,
+                    path: source_path.to_path_buf(),
+                });
+                return;
+            }
         };
 
         if !res.ends_with("\n") {
@@ -266,7 +272,7 @@ pub fn main() {
         );
         for failed in runner.failed {
             match failed {
-                Failure::Failed { function, path } => {
+                Failure::Failed { function, path, .. } => {
                     println!(
                         ">>> {} (source at {})",
                         function.name().bold(),

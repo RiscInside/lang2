@@ -7,6 +7,6 @@ members = [
     "src/lang2-parser",
     "src/lang2-sema",
     "src/lang2-shadow",
-    "src/lang2-span",
+    "src/lang2-misc",
 ]
 resolver = "2"

@@ -224,10 +224,17 @@ name = "lang2-ast"
 version = "0.1.0"
 dependencies = [
  "bumpalo",
+ "lang2-misc",
  "lang2-shadow",
- "lang2-span",
  "serde",
  "smallvec",
+]
+
+[[package]]
+name = "lang2-misc"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
@@ -235,7 +242,7 @@ name = "lang2-parser"
 version = "0.1.0"
 dependencies = [
  "lang2-ast",
- "lang2-span",
+ "lang2-misc",
  "logos",
  "serde",
  "smallvec",
@@ -258,19 +265,13 @@ name = "lang2-shadow"
 version = "0.1.0"
 
 [[package]]
-name = "lang2-span"
-version = "0.1.0"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "lang2c"
 version = "0.1.0"
 dependencies = [
  "bumpalo",
  "clap",
  "lang2-ast",
+ "lang2-misc",
  "lang2-parser",
  "lang2-sema",
  "once_cell",
@@ -284,6 +285,7 @@ dependencies = [
  "bumpalo",
  "clap",
  "lang2-ast",
+ "lang2-misc",
  "lang2-parser",
  "lang2-sema",
  "owo-colors",

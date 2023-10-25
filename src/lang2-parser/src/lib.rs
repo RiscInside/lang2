@@ -2,28 +2,10 @@ use lang2_ast::{
     builder::{ADTGroupContext, Builder, FunGroupHead},
     Exp, Function, Pattern, Prong, Ty, TypeParamsList, Variant, ADT, AST,
 };
-use lang2_span::{from_to, HasSpan, Span};
+use lang2_misc::{try_from_to, Error, Errors, HasSpan, Span};
 use logos::{Lexer, Logos};
-use serde::Serialize;
 use smallvec::{smallvec, SmallVec};
 use std::{iter::Peekable, ops::Range};
-
-#[derive(Debug, Serialize)]
-pub enum Error {
-    ExpectedActual {
-        expected: &'static str,
-        actual: &'static str,
-        pos: usize,
-    },
-    UnexpectedChar {
-        pos: usize,
-    },
-    UnexpectedEof {
-        pos: usize,
-    },
-}
-
-pub type ParseResult<T> = Result<T, Error>;
 
 #[derive(Logos, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[logos(skip r"[\n\t\r\f ]+|#.*\n")]
@@ -114,6 +96,13 @@ struct Token {
     span: Span,
 }
 
+#[derive(Clone, Copy)]
+enum TokenizerResult {
+    Tok(Token),
+    Error,
+    Eof,
+}
+
 impl Token {
     fn describe(&self) -> &'static str {
         self.kind.describe()
@@ -122,69 +111,97 @@ impl Token {
     fn from_spanned(
         raw: Option<(Result<TokenKind, ()>, Range<usize>)>,
         end: usize,
-    ) -> ParseResult<Self> {
+        errors: &mut Errors,
+    ) -> TokenizerResult {
         let Some((res, span)) = raw else {
-            return Err(Error::UnexpectedEof { pos: end });
+            errors.add(Error::UnexpectedEof {
+                pos: end.try_into().unwrap(),
+            });
+            return TokenizerResult::Eof;
         };
         match res {
-            Ok(kind) => Ok(Token {
+            Ok(kind) => TokenizerResult::Tok(Token {
                 kind,
-                span: span.into(),
+                span: try_from_to(span.start, span.end, 0).unwrap(),
             }),
-            Err(_) => Err(Error::UnexpectedChar { pos: span.start }),
+            Err(_) => {
+                errors.add(Error::UnexpectedChar {
+                    pos: span.start.try_into().unwrap(),
+                });
+                TokenizerResult::Error
+            }
         }
     }
 }
 
-impl Error {
-    fn expected_actual(expected: &'static str, actual: Token) -> Self {
-        Self::ExpectedActual {
-            expected,
-            actual: actual.describe(),
-            pos: actual.span.start.try_into().unwrap(),
-        }
+fn expected_actual(expected: &'static str, actual: Token) -> Error {
+    Error::ExpectedActual {
+        expected,
+        actual: actual.describe(),
+        pos: actual.span.start.try_into().unwrap(),
     }
 }
 
-struct Parser<'src, 'arena, 'builder> {
+struct Parser<'src, 'arena, 'builder, 'errors> {
     builder: &'builder mut Builder<'arena>,
     tokens: Peekable<logos::SpannedIter<'src, TokenKind>>,
     source: &'src str,
+    errors: &'errors mut Errors,
 }
 
-impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
-    fn new(source: &'src str, builder: &'builder mut Builder<'arena>) -> Self {
+impl<'src, 'arena, 'builder, 'errors> Parser<'src, 'arena, 'builder, 'errors> {
+    fn new(
+        source: &'src str,
+        builder: &'builder mut Builder<'arena>,
+        errors: &'errors mut Errors,
+    ) -> Self {
         Self {
             builder,
             tokens: Lexer::new(source).spanned().peekable(),
             source,
+            errors,
         }
     }
 
-    fn peek(&mut self) -> ParseResult<Token> {
-        return Token::from_spanned(self.tokens.peek().cloned(), self.source.len());
+    fn peek_raw(&mut self) -> TokenizerResult {
+        Token::from_spanned(self.tokens.peek().cloned(), self.source.len(), self.errors)
     }
 
-    fn peek_maybe_eof(&mut self) -> ParseResult<Option<Token>> {
-        let peeked = self.peek();
-        match peeked {
-            Ok(tok) => Ok(Some(tok)),
-            Err(Error::UnexpectedEof { .. }) => Ok(None),
-            Err(e) => Err(e),
+    fn peek(&mut self) -> Option<Token> {
+        match self.peek_raw() {
+            TokenizerResult::Tok(tok) => Some(tok),
+            TokenizerResult::Error | TokenizerResult::Eof => None,
         }
+    }
+
+    fn peek_maybe_eof(&mut self) -> Option<Option<Token>> {
+        match self.peek_raw() {
+            TokenizerResult::Tok(tok) => Some(Some(tok)),
+            TokenizerResult::Error => None,
+            TokenizerResult::Eof => Some(None),
+        }
+    }
+
+    fn push_error<T>(&mut self, error: Error) -> Option<T> {
+        self.errors.add(error);
+        None
+    }
+
+    fn expected_actual<T>(&mut self, expected: &'static str, actual: Token) -> Option<T> {
+        self.push_error(expected_actual(expected, actual))
     }
 
     fn consume(&mut self) {
         self.tokens.next();
     }
 
-    fn expect_exact(&mut self, kind: TokenKind) -> ParseResult<Span> {
+    fn expect_exact(&mut self, kind: TokenKind) -> Option<Span> {
         let tok = self.peek()?;
         if tok.kind == kind {
             self.consume();
-            Ok(tok.span)
+            Some(tok.span)
         } else {
-            Err(Error::expected_actual(kind.describe(), tok))
+            self.expected_actual(kind.describe(), tok)
         }
     }
 
@@ -195,27 +212,27 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         &mut self,
         start_span: Span,
         mut single: impl FnMut(&mut Self, &'src str, Span) -> T,
-        mut one: impl FnMut(&mut Self) -> ParseResult<P>,
+        mut one: impl FnMut(&mut Self) -> Option<P>,
         mut parametric: impl FnMut(&mut Self, &'src str, SmallVec<[P; 4]>, Span) -> T,
         left: TokenKind,
         right: TokenKind,
         not_right_or_comma: &'static str,
         require_one_if_parens: bool,
-    ) -> ParseResult<T> {
+    ) -> Option<T> {
         self.consume();
-        let name = &self.source[start_span.as_usize_range()];
+        let name = &self.source[start_span.as_usize_range(0)];
         match self.peek() {
-            Ok(Token { kind, .. }) if kind == left => {
+            Some(Token { kind, .. }) if kind == left => {
                 self.consume();
                 let mut params = smallvec![];
                 let tok = self.peek()?;
                 if !require_one_if_parens && tok.kind == right {
                     self.consume();
-                    return Ok(parametric(
+                    return Some(parametric(
                         self,
                         name,
                         params,
-                        from_to(start_span.start, tok.span.end),
+                        try_from_to(start_span.start, tok.span.end, 0).unwrap(),
                     ));
                 }
                 params.push(one(self)?);
@@ -228,49 +245,49 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                         }
                         kind if kind == right => {
                             self.consume();
-                            break Ok(parametric(
+                            break Some(parametric(
                                 self,
                                 name,
                                 params,
-                                from_to(start_span.start, tok.span.end),
+                                try_from_to(start_span.start, tok.span.end, 0).unwrap(),
                             ));
                         }
-                        _ => break Err(Error::expected_actual(not_right_or_comma, tok)),
+                        _ => self.errors.add(expected_actual(not_right_or_comma, tok)),
                     }
                 };
             }
             _ => {}
         }
-        Ok(single(self, name, start_span))
+        Some(single(self, name, start_span))
     }
 
     #[inline(always)]
     fn parse_parens<T>(
         &mut self,
         starting_span: Span,
-        mut one: impl FnMut(&mut Self) -> ParseResult<T>,
+        mut one: impl FnMut(&mut Self) -> Option<T>,
         mut surround_with_parens: impl FnMut(&mut Self, T, Span) -> T,
-    ) -> ParseResult<T> {
+    ) -> Option<T> {
         self.consume();
         let inner = one(self)?;
         let rparen = self.expect_exact(TokenKind::RParen)?;
-        Ok(surround_with_parens(
+        Some(surround_with_parens(
             self,
             inner,
-            from_to(starting_span.start, rparen.end),
+            try_from_to(starting_span.start, rparen.end, 0).unwrap(),
         ))
     }
 
     #[inline(always)]
     fn parse_typed<T: HasSpan>(
         &mut self,
-        mut one: impl FnMut(&mut Self) -> ParseResult<T>,
+        mut one: impl FnMut(&mut Self) -> Option<T>,
         mut typed: impl FnMut(&mut Self, T, Ty<'arena>, Span) -> T,
-    ) -> ParseResult<T> {
+    ) -> Option<T> {
         let atom = one(self)?;
         let atom_start = atom.span().start;
-        Ok(
-            if let Ok(Token {
+        Some(
+            if let Some(Token {
                 kind: TokenKind::Colon,
                 ..
             }) = self.peek()
@@ -278,14 +295,14 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                 self.consume();
                 let ty = self.parse_ty()?;
                 let ty_end = ty.span.end;
-                typed(self, atom, ty, from_to(atom_start, ty_end))
+                typed(self, atom, ty, try_from_to(atom_start, ty_end, 0).unwrap())
             } else {
                 atom
             },
         )
     }
 
-    fn parse_lparen_ty(&mut self, span: Span) -> ParseResult<Ty<'arena>> {
+    fn parse_lparen_ty(&mut self, span: Span) -> Option<Ty<'arena>> {
         self.parse_parens(
             span,
             |this| this.parse_ty(),
@@ -293,7 +310,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_ty_cons(&mut self, cons_span: Span) -> ParseResult<Ty<'arena>> {
+    fn parse_ty_cons(&mut self, cons_span: Span) -> Option<Ty<'arena>> {
         self.parse_with_list(
             cons_span,
             |this, name, span| this.builder.build_tapp(name, span, std::iter::empty()),
@@ -306,26 +323,27 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_ty(&mut self) -> ParseResult<Ty<'arena>> {
+    fn parse_ty(&mut self) -> Option<Ty<'arena>> {
         let tok = self.peek()?;
         match tok.kind {
             TokenKind::LParen => self.parse_lparen_ty(tok.span),
             TokenKind::LowercaseStartId => {
                 self.consume();
-                Ok(self
-                    .builder
-                    .build_tvar_ty(&self.source[tok.span.as_usize_range()], tok.span))
+                Some(
+                    self.builder
+                        .build_tvar_ty(&self.source[tok.span.as_usize_range(0)], tok.span),
+                )
             }
             TokenKind::Underscore => {
                 self.consume();
-                Ok(self.builder.build_underscore_ty(tok.span))
+                Some(self.builder.build_underscore_ty(tok.span))
             }
             TokenKind::UppercaseStartId => self.parse_ty_cons(tok.span),
-            _ => Err(Error::expected_actual("type", tok)),
+            _ => self.expected_actual("type", tok),
         }
     }
 
-    fn parse_lparen_pat(&mut self, span: Span) -> ParseResult<Pattern<'arena>> {
+    fn parse_lparen_pat(&mut self, span: Span) -> Option<Pattern<'arena>> {
         self.parse_parens(
             span,
             |this| this.parse_pat(),
@@ -333,7 +351,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_destruct(&mut self, cons_span: Span) -> ParseResult<Pattern<'arena>> {
+    fn parse_destruct(&mut self, cons_span: Span) -> Option<Pattern<'arena>> {
         self.parse_with_list(
             cons_span,
             |this, name, span| this.builder.build_destruct(name, span, std::iter::empty()),
@@ -346,30 +364,31 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_pat_atom(&mut self) -> ParseResult<Pattern<'arena>> {
+    fn parse_pat_atom(&mut self) -> Option<Pattern<'arena>> {
         let tok = self.peek()?;
         match tok.kind {
             TokenKind::LParen => self.parse_lparen_pat(tok.span),
             TokenKind::Underscore => {
                 self.consume();
-                Ok(self.builder.build_underscore_pat(tok.span))
+                Some(self.builder.build_underscore_pat(tok.span))
             }
             TokenKind::LowercaseStartId => {
                 self.consume();
-                Ok(self
-                    .builder
-                    .build_id_pat(&self.source[tok.span.as_usize_range()], tok.span))
+                Some(
+                    self.builder
+                        .build_id_pat(&self.source[tok.span.as_usize_range(0)], tok.span),
+                )
             }
             TokenKind::UppercaseStartId => self.parse_destruct(tok.span),
-            _ => Err(Error::expected_actual("pattern", tok)),
+            _ => self.expected_actual("pattern", tok),
         }
     }
 
-    fn parse_pat(&mut self) -> ParseResult<Pattern<'arena>> {
+    fn parse_pat(&mut self) -> Option<Pattern<'arena>> {
         let atom = self.parse_pat_atom()?;
         let atom_start = atom.span.start;
-        Ok(
-            if let Ok(Token {
+        Some(
+            if let Some(Token {
                 kind: TokenKind::Colon,
                 ..
             }) = self.peek()
@@ -377,19 +396,22 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                 self.consume();
                 let ty = self.parse_ty()?;
                 let ty_end = ty.span.end;
-                self.builder
-                    .build_annotated_pat(atom, ty, from_to(atom_start, ty_end))
+                self.builder.build_annotated_pat(
+                    atom,
+                    ty,
+                    try_from_to(atom_start, ty_end, 0).unwrap(),
+                )
             } else {
                 atom
             },
         )
     }
 
-    fn parse_fun(&mut self, group: Option<&FunGroupHead<'arena>>) -> ParseResult<Function<'arena>> {
+    fn parse_fun(&mut self, group: Option<&FunGroupHead<'arena>>) -> Option<Function<'arena>> {
         self.consume(); // skip fun
         let name_span = self.expect_exact(TokenKind::LowercaseStartId)?;
         let decl_start = name_span.start;
-        let name = &self.source[name_span.as_usize_range()];
+        let name = &self.source[name_span.as_usize_range(0)];
         let (_, ty_params) = self.parse_ty_list()?;
 
         self.expect_exact(TokenKind::LParen)?;
@@ -413,10 +435,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                         params.push(self.parse_pat()?);
                     }
                     _ => {
-                        return Err(Error::expected_actual(
-                            "`,` (comma) or `)` (right parenthesis)",
-                            tok,
-                        ))
+                        return self.expected_actual("`,` (comma) or `)` (right parenthesis)", tok)
                     }
                 }
             }
@@ -436,17 +455,17 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
             ty_params,
             params.into_iter(),
             ret_ty,
-            from_to(decl_start, decl_end),
+            try_from_to(decl_start, decl_end, 0).unwrap(),
         );
 
         self.expect_exact(TokenKind::Arrow)?;
         let body = self.parse_exp()?;
         self.expect_exact(TokenKind::Period)?;
 
-        Ok(self.builder.build_function(group, head, body))
+        Some(self.builder.build_function(group, head, body))
     }
 
-    fn parse_fun_group(&mut self, fun_span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_fun_group(&mut self, fun_span: Span) -> Option<Exp<'arena>> {
         let head = self.builder.fun_group_start();
         let mut funs: SmallVec<[Function<'arena>; 4]> = smallvec![self.parse_fun(Some(&head))?];
 
@@ -459,12 +478,14 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         let funs = self.builder.build_function_group(head, funs.into_iter());
         let exp = self.parse_exp()?;
         let exp_end = exp.span.end;
-        Ok(self
-            .builder
-            .build_function_exp(funs, exp, from_to(fun_span.start, exp_end)))
+        Some(self.builder.build_function_exp(
+            funs,
+            exp,
+            try_from_to(fun_span.start, exp_end, 0).unwrap(),
+        ))
     }
 
-    fn parse_val(&mut self, span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_val(&mut self, span: Span) -> Option<Exp<'arena>> {
         self.consume(); // skip val
         let lhs = self.parse_pat()?;
         self.expect_exact(TokenKind::EqualsSign)?;
@@ -474,19 +495,20 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
 
         let exp: Exp<'_> = self.parse_exp()?;
         let exp_end = exp.span.end;
-        Ok(self
-            .builder
-            .finalize_val(head, exp, from_to(span.start, exp_end)))
+        Some(
+            self.builder
+                .finalize_val(head, exp, try_from_to(span.start, exp_end, 0).unwrap()),
+        )
     }
 
     fn parse_variant(
         &mut self,
         adt_group_context: &mut ADTGroupContext<'arena>,
-    ) -> ParseResult<Variant<'arena>> {
+    ) -> Option<Variant<'arena>> {
         let name_span = self.expect_exact(TokenKind::UppercaseStartId)?;
-        let name = &self.source[name_span.as_usize_range()];
+        let name = &self.source[name_span.as_usize_range(0)];
         match self.peek() {
-            Ok(Token {
+            Some(Token {
                 kind: TokenKind::LParen,
                 ..
             }) => {
@@ -501,36 +523,35 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                         }
                         TokenKind::RParen => {
                             self.consume();
-                            break Ok(self.builder.build_variant(
+                            break Some(self.builder.build_variant(
                                 adt_group_context,
                                 name,
-                                from_to(name_span.start, tok.span.end),
+                                try_from_to(name_span.start, tok.span.end, 0).unwrap(),
                                 params.into_iter(),
                             ));
                         }
                         _ => {
-                            break Err(Error::expected_actual(
-                                "`,` (comma) or `)` (right parenthesis)",
-                                tok,
-                            ))
+                            break self
+                                .expected_actual("`,` (comma) or `)` (right parenthesis)", tok)
                         }
                     }
                 };
             }
             _ => {}
         }
-        Ok(self
-            .builder
-            .build_variant(adt_group_context, name, name_span, std::iter::empty()))
+        Some(
+            self.builder
+                .build_variant(adt_group_context, name, name_span, std::iter::empty()),
+        )
     }
 
-    fn parse_tvar_input(&mut self) -> ParseResult<(&'src str, Span)> {
+    fn parse_tvar_input(&mut self) -> Option<(&'src str, Span)> {
         let span = self.expect_exact(TokenKind::LowercaseStartId)?;
-        let name = &self.source[span.as_usize_range()];
-        Ok((name, span))
+        let name = &self.source[span.as_usize_range(0)];
+        Some((name, span))
     }
 
-    fn parse_ty_list(&mut self) -> ParseResult<(Option<Span>, TypeParamsList<'arena>)> {
+    fn parse_ty_list(&mut self) -> Option<(Option<Span>, TypeParamsList<'arena>)> {
         let mut params: SmallVec<[(&str, Span); 4]> = SmallVec::<[(&'src str, Span); 4]>::new();
         let tok = self.peek()?;
         if tok.kind == TokenKind::LBracket {
@@ -546,28 +567,26 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                     }
                     TokenKind::RBracket => {
                         self.consume();
-                        return Ok((
-                            Some(from_to(start, tok.span.end)),
+                        return Some((
+                            Some(try_from_to(start, tok.span.end, 0).unwrap()),
                             self.builder.build_tys_list(params.into_iter()),
                         ));
                     }
                     _ => {
-                        return Err(Error::expected_actual(
-                            "`,` (comma) or `]` (right bracket)",
-                            tok,
-                        ))
+                        return self
+                            .push_error(expected_actual("`,` (comma) or `]` (right bracket)", tok))
                     }
                 }
             }
         };
-        Ok((None, self.builder.build_tys_list(params.into_iter())))
+        Some((None, self.builder.build_tys_list(params.into_iter())))
     }
 
     fn parse_adt(
         &mut self,
         adt_group_context: &mut ADTGroupContext<'arena>,
         data_span: Span,
-    ) -> ParseResult<ADT<'arena>> {
+    ) -> Option<ADT<'arena>> {
         self.consume(); // skip data
         let name_span = self.expect_exact(TokenKind::UppercaseStartId)?;
         let decl_start = data_span.start;
@@ -585,10 +604,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         let mut tok = self.peek()?;
         while tok.kind != TokenKind::Period {
             if tok.kind != TokenKind::Comma {
-                return Err(Error::expected_actual(
-                    "`,` (comma) or `.` (dot or period)",
-                    tok,
-                ));
+                return self.expected_actual("`,` (comma) or `.` (dot or period)", tok);
             }
             self.consume();
             variants.push(self.parse_variant(adt_group_context)?);
@@ -596,16 +612,16 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         }
 
         self.consume();
-        Ok(self.builder.build_adt(
+        Some(self.builder.build_adt(
             adt_group_context,
-            &self.source[name_span.as_usize_range()],
+            &self.source[name_span.as_usize_range(0)],
             ty_params,
-            from_to(decl_start, decl_end),
+            try_from_to(decl_start, decl_end, 0).unwrap(),
             variants.into_iter(),
         ))
     }
 
-    fn parse_adts_in(&mut self, data_span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_adts_in(&mut self, data_span: Span) -> Option<Exp<'arena>> {
         let mut group = self.builder.new_adt_group();
         let mut adts: SmallVec<[ADT<'arena>; 4]> =
             smallvec![self.parse_adt(&mut group, data_span)?];
@@ -617,12 +633,14 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         }
         let exp = self.parse_exp()?;
         let exp_end = exp.span.end;
-        Ok(self
-            .builder
-            .build_adt_in_exp(adts.into_iter(), exp, from_to(data_span.start, exp_end)))
+        Some(self.builder.build_adt_in_exp(
+            adts.into_iter(),
+            exp,
+            try_from_to(data_span.start, exp_end, 0).unwrap(),
+        ))
     }
 
-    fn parse_prong(&mut self) -> ParseResult<Prong<'arena>> {
+    fn parse_prong(&mut self) -> Option<Prong<'arena>> {
         let mut patterns: SmallVec<[Pattern<'arena>; 4]> = smallvec![self.parse_pat()?];
         loop {
             let tok = self.peek()?;
@@ -635,19 +653,17 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                     self.consume();
                     let head = self.builder.build_prong_head(patterns.into_iter());
                     let exp = self.parse_exp()?;
-                    break Ok(self.builder.finalize_prong(head, exp));
+                    break Some(self.builder.finalize_prong(head, exp));
                 }
                 _ => {
-                    break Err(Error::expected_actual(
-                        "`=>` (right arrow) or `,` (comma)",
-                        tok,
-                    ))
+                    break self
+                        .push_error(expected_actual("`=>` (right arrow) or `,` (comma)", tok))
                 }
             }
         }
     }
 
-    fn parse_match(&mut self, match_span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_match(&mut self, match_span: Span) -> Option<Exp<'arena>> {
         self.consume(); // skip match
 
         let mut scrutinees: SmallVec<[Exp<'arena>; 4]> = smallvec![self.parse_exp()?];
@@ -662,7 +678,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                     self.consume();
                     break;
                 }
-                _ => return Err(Error::expected_actual("`with` or `,` (comma)", tok)),
+                _ => return self.expected_actual("`with` or `,` (comma)", tok),
             }
         }
 
@@ -679,21 +695,20 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                     break tok.span;
                 }
                 _ => {
-                    return Err(Error::expected_actual(
-                        "`end` or `,` (comma) followed by match prong",
-                        tok,
-                    ))
+                    return self
+                        .expected_actual("`end` or `,` (comma) followed by match prong", tok)
                 }
             }
         };
 
-        let span = from_to(match_span.start, end_span.end);
-        Ok(self
-            .builder
-            .build_match(scrutinees.into_iter(), prongs.into_iter(), span))
+        let span = try_from_to(match_span.start, end_span.end, 0).unwrap();
+        Some(
+            self.builder
+                .build_match(scrutinees.into_iter(), prongs.into_iter(), span),
+        )
     }
 
-    fn parse_lparen_exp(&mut self, span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_lparen_exp(&mut self, span: Span) -> Option<Exp<'arena>> {
         self.parse_parens(
             span,
             |this| this.parse_exp(),
@@ -701,7 +716,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_id_or_call(&mut self, span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_id_or_call(&mut self, span: Span) -> Option<Exp<'arena>> {
         self.parse_with_list(
             span,
             |this, name, span| this.builder.build_id_exp(name, span),
@@ -714,7 +729,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_cons(&mut self, cons_span: Span) -> ParseResult<Exp<'arena>> {
+    fn parse_cons(&mut self, cons_span: Span) -> Option<Exp<'arena>> {
         self.parse_with_list(
             cons_span,
             |this, name, span| this.builder.build_new(name, span, std::iter::empty()),
@@ -727,7 +742,7 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
         )
     }
 
-    fn parse_exp_atom(&mut self) -> ParseResult<Exp<'arena>> {
+    fn parse_exp_atom(&mut self) -> Option<Exp<'arena>> {
         let tok = self.peek()?;
         match tok.kind {
             TokenKind::Fun => self.parse_fun_group(tok.span),
@@ -737,18 +752,18 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
             TokenKind::LParen => self.parse_lparen_exp(tok.span),
             TokenKind::LowercaseStartId => self.parse_id_or_call(tok.span),
             TokenKind::UppercaseStartId => self.parse_cons(tok.span),
-            _ => Err(Error::expected_actual("expression", tok)),
+            _ => self.expected_actual("expression", tok),
         }
     }
 
-    fn parse_exp(&mut self) -> ParseResult<Exp<'arena>> {
+    fn parse_exp(&mut self) -> Option<Exp<'arena>> {
         self.parse_typed(
             |this| this.parse_exp_atom(),
             |this, exp, ty, span| this.builder.build_annotated_exp(exp, ty, span),
         )
     }
 
-    fn parse_toplevel(&mut self) -> ParseResult<()> {
+    fn parse_toplevel(&mut self) -> Option<()> {
         let mut group = self.builder.new_adt_group();
         while let Some(tok) = self.peek_maybe_eof()? {
             match tok.kind {
@@ -760,19 +775,20 @@ impl<'src, 'arena, 'builder> Parser<'src, 'arena, 'builder> {
                     let adt = self.parse_adt(&mut group, tok.span)?;
                     self.builder.add_adt(adt);
                 }
-                _ => return Err(Error::expected_actual("top-level declaration", tok)),
+                _ => return self.expected_actual("top-level declaration", tok),
             }
         }
-        Ok(())
+        Some(())
     }
 }
 
-pub fn parse<'src, 'arena>(
+pub fn parse<'src, 'arena, 'errors>(
     source: &'src str,
     mut builder: Builder<'arena>,
-) -> ParseResult<AST<'arena>> {
-    let mut parser = Parser::new(source, &mut builder);
+    errors: &'errors mut Errors,
+) -> Option<AST<'arena>> {
+    let mut parser = Parser::new(source, &mut builder, errors);
     parser.parse_toplevel()?;
     drop(parser);
-    Ok(builder.ast())
+    Some(builder.ast())
 }

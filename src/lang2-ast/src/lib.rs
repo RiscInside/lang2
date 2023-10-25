@@ -5,7 +5,7 @@ use std::{
     ops::{Index, IndexMut},
 };
 
-use lang2_span::{HasSpan, Span};
+use lang2_misc::{HasSpan, Span};
 
 pub mod builder;
 
