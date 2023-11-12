@@ -9,7 +9,7 @@ visitsEverything =
   TestCase $
     assertEqual
       "Graph with vertices [1, 2, 3] and edges 2 -> 1 and 1 -> 3 should have 3 separate SCCs"
-      [IVertex 2 :| [], IVertex 1 :| [], IVertex 3 :| []]
+      [IVertex 3 :| [], IVertex 1 :| [], IVertex 2 :| []]
       (computeSCCsTest [1 .. 3] [(2, 1), (1, 3)])
 
 -- from https://en.wikipedia.org/wiki/Strongly_connected_component#/media/File:Scc-1.svg
@@ -21,8 +21,16 @@ testOnGraph1 =
   TestCase $
     assertEqual
       "Graph at https://en.wikipedia.org/wiki/Strongly_connected_component#/media/File:Scc-1.svg"
-      undefined
+      [5 :| [4], 8 :| [7, 6], 1 :| [2, 3]]
       (computeSCCsTest [1 .. 8] graph1)
 
+testOnGraph1' :: Test
+testOnGraph1' =
+  TestCase $
+    assertEqual
+      "Graph at https://en.wikipedia.org/wiki/Strongly_connected_component#/media/File:Scc-1.svg (reversed order)"
+      [5 :| [4], 8 :| [7, 6], 3 :| [1, 2]]
+      (computeSCCsTest [8, 7, 6, 5, 4, 3, 2, 1] graph1)
+
 sccTestsList :: Test
-sccTestsList = TestList [visitsEverything]
+sccTestsList = TestList [visitsEverything, testOnGraph1, testOnGraph1']
