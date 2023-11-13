@@ -3,7 +3,9 @@ module Main where
 import Control.Monad (forM, forM_)
 import qualified Data.Text.IO (putStrLn)
 import Data.Text.IO.Utf8 (readFile)
+import Parser (parseASTWithSpans)
 import System.Environment (getArgs, getProgName)
+import Text.Megaparsec
 import Prelude hiding (init, last, readFile)
 
 type SourceFilePath = FilePath
@@ -19,16 +21,16 @@ data DriverCommand
   | UnrecognizedCommand String Int
   | Help
 
-parse :: [String] -> DriverCommand
-parse ["dump-source", path] = DumpSource path
-parse ["dump-ast", path] = DumpAST path
-parse ["dump-poly", path] = DumpPoly path
-parse ["dump-mono", path] = DumpMono path
-parse ["emit-c", input, output] = EmitC input output
-parse [] = Help
-parse ("help" : _) = Help
+parseCmd :: [String] -> DriverCommand
+parseCmd ["dump-source", path] = DumpSource path
+parseCmd ["dump-ast", path] = DumpAST path
+parseCmd ["dump-poly", path] = DumpPoly path
+parseCmd ["dump-mono", path] = DumpMono path
+parseCmd ["emit-c", input, output] = EmitC input output
+parseCmd [] = Help
+parseCmd ("help" : _) = Help
 --
-parse (name : args) = UnrecognizedCommand name (length args)
+parseCmd (name : args) = UnrecognizedCommand name (length args)
 
 execute :: DriverCommand -> IO ()
 execute (DumpSource path) = do
@@ -39,6 +41,15 @@ execute (DumpSource path) = do
   putStrLn ""
   Data.Text.IO.putStrLn file
   putStrLn ""
+execute (DumpAST path) = do
+  file <- readFile path
+  putStrLn "=================================================================="
+  putStrLn $ "AST for the file `" ++ path ++ "`"
+  putStrLn "=================================================================="
+  putStrLn ""
+  case parseASTWithSpans path file of
+    Left errs -> putStr $ errorBundlePretty errs
+    Right ast -> print ast
 execute (UnrecognizedCommand cmd arity) = do
   progName <- getProgName
   putStrLn $ progName ++ ": Unrecognized command " ++ cmd ++ "/" ++ show arity
@@ -58,7 +69,7 @@ execute Help = do
   putStrLn "$ cc -o test test.c # Compile the C file with your favourite C compiler"
 
 main' :: [String] -> IO ()
-main' = execute . parse
+main' = execute . parseCmd
 
 main :: IO ()
 main = getArgs >>= main'

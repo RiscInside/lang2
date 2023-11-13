@@ -3,26 +3,37 @@
 module Parser where
 
 import AST
-  ( AExp,
-    AExpKind (ACall, AExpCons, AExpId, AValIn),
+  ( AADT (..),
+    AExp,
+    AExpKind (..),
+    AFun (..),
     APat,
-    APatKind (APatCons, APatId, APat_),
+    APatKind (..),
+    AST (..),
+    ATopDecl (..),
     ATy (ATy),
-    ATyKind (ATyApp, ATyVar),
+    ATyKind (..),
+    AVariant (..),
     Annotatable (annotate),
     HasSpan (..),
     Range,
     Span (Span),
+    TextAADT,
     TextAExp,
+    TextAFun,
     TextAPat,
+    TextAST,
+    TextATopDecl,
     TextATy,
+    TextAVariant,
   )
-import Control.Applicative (Alternative (empty), (<|>))
+import Control.Applicative (Alternative (empty), optional, (<|>))
 import Control.Monad (void, (>=>))
 import Data.Functor ((<&>))
+import Data.List.NonEmpty (NonEmpty (..))
 import Data.Text (Text, pack)
 import Data.Void (Void)
-import Text.Megaparsec (Parsec, SourcePos, getOffset, getSourcePos, notFollowedBy, single, (<?>))
+import Text.Megaparsec (MonadParsec (hidden), ParseErrorBundle, Parsec, SourcePos, eof, getOffset, getSourcePos, notFollowedBy, parse, single, (<?>))
 import Text.Megaparsec.Char (alphaNumChar, lowerChar, space, space1, string, upperChar)
 import qualified Text.Megaparsec.Char.Lexer as Lexer
 import Prelude hiding (exp)
@@ -59,8 +70,14 @@ colon = char ':'
 underscore :: Parser ()
 underscore = char '_'
 
+dot :: Parser ()
+dot = char '.'
+
 equalsSign :: Parser ()
-equalsSign = char '='
+equalsSign = makeLexeme (void (single '=') >> notFollowedBy (single '>')) <?> "="
+
+arrow :: Parser ()
+arrow = makeLexeme . void $ string (pack "=>")
 
 -- TODO: figure out what's the best way to lex identifiers with megaparsec
 identifier :: Parser Char -> Parser Char -> Parser Text
@@ -70,7 +87,7 @@ identifier first others = makeLexeme $ do
   pure $ pack (head : tail)
 
 keyword :: String -> Parser ()
-keyword s = do
+keyword s = makeLexeme $ do
   string (pack s)
   notFollowedBy alphaNumChar
 
@@ -88,6 +105,11 @@ withFallback a p = p <|> pure a
 
 repeated :: Parser a -> Parser [a]
 repeated p = withFallback [] $ p >>= \head -> repeated p >>= \tail -> pure $ head : tail
+
+repeated1 :: Parser a -> Parser (NonEmpty a)
+repeated1 p = do
+  first <- p
+  (first :|) <$> repeated p
 
 list1 :: Parser a -> Parser b -> Parser [b]
 list1 sep elem = elem >>= \head -> repeated (sep *> elem) >>= \tail -> pure $ head : tail
@@ -125,19 +147,22 @@ inSpan p = uncurry addSpan <$> withSpan p
 -----------------------------------------------------------------
 
 typeVarName :: Parser Text
-typeVarName = identifier lowerChar alphaNumChar <?> "type variable name"
+typeVarName = hidden (identifier lowerChar alphaNumChar) <?> "type variable name"
 
 typeConsName :: Parser Text
-typeConsName = identifier upperChar alphaNumChar <?> "type constructor name"
+typeConsName = hidden (identifier upperChar alphaNumChar) <?> "type constructor name"
 
 patVarName :: Parser Text
-patVarName = identifier lowerChar alphaNumChar <?> "pattern variable name"
+patVarName = hidden (identifier lowerChar alphaNumChar) <?> "pattern variable name"
 
 variantName :: Parser Text
-variantName = identifier upperChar alphaNumChar <?> "variant name"
+variantName = hidden (identifier upperChar alphaNumChar) <?> "variant name"
 
 varName :: Parser Text
-varName = identifier lowerChar alphaNumChar <?> "identifier"
+varName = hidden (identifier lowerChar alphaNumChar) <?> "identifier"
+
+funName :: Parser Text
+funName = hidden (identifier lowerChar alphaNumChar) <?> "function name"
 
 ty :: (ParseSpan s) => Parser (TextATy s)
 ty = inSpan (varTy <|> appTy) <|> parenthesized ty
@@ -150,7 +175,7 @@ ty = inSpan (varTy <|> appTy) <|> parenthesized ty
     varTy = typeVarName <&> ATyVar
 
 withTy :: (ParseSpan s, Range s, Annotatable p) => Parser (p Text Text s) -> Parser (p Text Text s)
-withTy = (>>= reduce annotate ty)
+withTy = (>>= reduce annotate (colon >> ty))
 
 pat :: (ParseSpan s, Range s) => Parser (TextAPat s)
 pat = withTy $ inSpan (underscorePat <|> varPat <|> consPat) <|> parenthesized pat
@@ -163,7 +188,16 @@ pat = withTy $ inSpan (underscorePat <|> varPat <|> consPat) <|> parenthesized p
     varPat = APatId <$> patVarName
 
 exp :: (ParseSpan s, Range s) => Parser (TextAExp s)
-exp = withTy $ inSpan (idOrCallExp <|> consExp <|> valInExp) <|> parenthesized exp
+exp =
+  withTy $
+    inSpan
+      ( funGroupExp
+          <|> adtGroupExp
+          <|> valInExp
+          <|> idOrCallExp
+          <|> consExp
+      )
+      <|> parenthesized exp
   where
     idOrCallExp = do
       name <- varName
@@ -179,5 +213,75 @@ exp = withTy $ inSpan (idOrCallExp <|> consExp <|> valInExp) <|> parenthesized e
       lhs <- pat
       equalsSign
       rhs <- exp
-      keyword "in"
+      dot
       AValIn lhs rhs <$> exp
+
+    funGroupExp = do
+      funs <- (:| []) <$> repeated1 fun
+      AExpFunGroup funs <$> exp
+
+    adtGroupExp = do
+      adts <- repeated1 adt
+      AExpADTGroup adts <$> exp
+
+fun :: (ParseSpan s, Range s) => Parser (TextAFun s)
+fun = do
+  keyword "fun"
+  (span, name) <- withSpan funName
+  tyParams <- optional (bracketed (commaList1 (withSpan typeVarName)))
+  params <- parenthesized (commaList pat)
+  retTy <- optional (colon >> ty)
+  arrow
+  body <- exp
+  dot
+  return $
+    AFun
+      { aFunName = name,
+        aFunNameSpan = span,
+        aFunTvs = tyParams,
+        aFunParams = params,
+        aFunRetTy = retTy,
+        aFunBody = body
+      }
+
+variant :: (ParseSpan s, Range s) => Parser (TextAVariant s)
+variant = do
+  (span, name) <- withSpan variantName
+  params <- parenthesized (commaList1 ty) <|> pure []
+  pure $
+    AVariant
+      { aVariantName = name,
+        aVariantNameSpan = span,
+        aVariantParams = params
+      }
+
+adt :: (ParseSpan s, Range s) => Parser (TextAADT s)
+adt = do
+  keyword "data"
+  name <- typeConsName
+  params <- bracketed (commaList1 (withSpan typeVarName)) <|> pure []
+  colon
+  variants <- commaList1 variant
+  dot
+  pure $ AADT {aADTName = name, aADTParams = params, aADTVariants = variants}
+
+topItem :: (ParseSpan s, Range s) => Parser (TextATopDecl s)
+topItem = (ATopADT <$> adt) <|> (ATopFun <$> fun)
+
+ast' :: (ParseSpan s, Range s) => Parser (TextAST s)
+ast' = AST <$> repeated topItem
+
+ast :: (ParseSpan s, Range s) => Parser (TextAST s)
+ast = ast' <* eof
+
+astNoSpans :: Parser (TextAST ())
+astNoSpans = ast
+
+astWithSpans :: Parser (TextAST Span)
+astWithSpans = ast
+
+parseASTNoSpans :: String -> Text -> Either (ParseErrorBundle Text Void) (TextAST ())
+parseASTNoSpans = parse ast
+
+parseASTWithSpans :: String -> Text -> Either (ParseErrorBundle Text Void) (TextAST Span)
+parseASTWithSpans = parse ast

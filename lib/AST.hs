@@ -2,29 +2,15 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE InstanceSigs #-}
 
-module AST
-  ( ATyKind (..),
-    ATy (..),
-    APatKind (..),
-    APat (..),
-    AExpKind (..),
-    AExp (..),
-    Span (Span),
-    Range,
-    HasSpan,
-    Annotatable,
-    annotate,
-    addSpan,
-    removeSpan,
-    TextATy,
-    TextAPat,
-    TextAExp,
-  )
-where
+module AST where
 
+import Data.List.NonEmpty (NonEmpty)
 import Data.Text (Text)
 
 data Span = Span Int Int
+
+instance Show Span where
+  show (Span start end) = show start ++ "-" ++ show end
 
 class Range s where
   fromTo :: s -> s -> s
@@ -50,8 +36,9 @@ data APatKind id c tv tc s
   | APat_
   | APatCons c [APat id c tv tc s]
   | APatOfType (APat id c tv tc s) (ATy tv tc s)
+  deriving (Show)
 
-data APat id c tv tc s = APat s (APatKind id c tv tc s)
+data APat id c tv tc s = APat s (APatKind id c tv tc s) deriving (Show)
 
 type TextAPat = APat Text Text Text Text
 
@@ -61,10 +48,53 @@ data AExpKind id c tv tc s
   | AExpCons c [AExp id c tv tc s]
   | AExpId id
   | AExpOfType (AExp id c tv tc s) (ATy tv tc s)
+  | -- List of lists of functions is used here to indicate letrec groups - parser produces n singleton lists,
+    -- renaming pass uses tarjan's algorithm to assemble SCCs together
+    AExpFunGroup (NonEmpty (NonEmpty (AFun id c tv tc s))) (AExp id c tv tc s)
+  | AExpADTGroup (NonEmpty (AADT c tv tc s)) (AExp id c tv tc s)
+  deriving (Show)
 
-data AExp id c tv tc s = AExp s (AExpKind id c tv tc s)
+data AExp id c tv tc s = AExp s (AExpKind id c tv tc s) deriving (Show)
 
 type TextAExp = AExp Text Text Text Text
+
+data AFun id c tv tc s = AFun
+  { aFunName :: id,
+    aFunNameSpan :: s,
+    aFunTvs :: Maybe [(s, tv)],
+    aFunRetTy :: Maybe (ATy tv tc s),
+    aFunParams :: [APat id c tv tc s],
+    aFunBody :: AExp id c tv tc s
+  }
+  deriving (Show)
+
+type TextAFun = AFun Text Text Text Text
+
+data AVariant c tv tc s = AVariant
+  { aVariantName :: c,
+    aVariantNameSpan :: s,
+    aVariantParams :: [ATy tv tc s]
+  }
+  deriving (Show)
+
+type TextAVariant = AVariant Text Text Text
+
+data AADT c tv tc s = AADT
+  { aADTName :: tc,
+    aADTParams :: [(s, tv)],
+    aADTVariants :: [AVariant c tv tc s]
+  }
+  deriving (Show)
+
+type TextAADT = AADT Text Text Text
+
+data ATopDecl id c tv tc s = ATopFun (AFun id c tv tc s) | ATopADT (AADT c tv tc s) deriving (Show)
+
+type TextATopDecl = ATopDecl Text Text Text Text
+
+newtype AST id c tv tc s = AST [ATopDecl id c tv tc s] deriving (Show)
+
+type TextAST = AST Text Text Text Text
 
 class HasSpan f p | f -> p where
   addSpan :: s -> p s -> f s

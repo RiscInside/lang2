@@ -21,7 +21,7 @@ library lang2-lib
         containers ^>= 0.6.5.1,
         ref-fd ^>= 0.5.0.1,
     exposed-modules:
-        Types, SCC
+        AST, Parser, Types, SCC
 
 executable lang2c
     main-is:          Main.hs
@@ -29,6 +29,7 @@ executable lang2c
     default-language: Haskell2010
     build-depends:
         base ^>=4.16.4.0,
+        megaparsec ^>=9.6.0,
         with-utf8 ^>= 1.0.2.4,
         text ^>= 1.2.4.0,
         lang2-lib
